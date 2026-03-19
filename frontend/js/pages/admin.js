@@ -4,7 +4,7 @@
 
 const API = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
   ? 'http://127.0.0.1:8000'
-  : 'https://your-production-api.com'; /* ← replace before deploying */
+  : 'https://food-ordering-webapp-pgcy.onrender.com'; /* ← replace before deploying */
 
 /* ══════════════════════════════════════════════
    STATE
