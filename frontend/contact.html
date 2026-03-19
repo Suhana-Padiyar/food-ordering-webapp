@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us – शहर Garden Cafe &amp; Kitchen</title>
+  <link rel="icon" type="image/png" href="images/logo.png"/>
+  <link rel="apple-touch-icon" href="images/logo.png"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/shared.css"/>
+  <link rel="stylesheet" href="css/pages/contact.css"/>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════
+       ANNOUNCEMENT BAR
+  ═══════════════════════════════════════ -->
+  <div class="announce-bar" id="announceBar" role="banner" aria-label="Promotion">
+    <div class="announce-ticker" aria-hidden="true">
+      <span class="announce-msg">
+        🌿 Welcome to शहर Garden!
+        <span class="sep">✦</span>
+        Use code <span class="code-pill">SHEHER10</span> for 10% off your first order
+        <span class="sep">✦</span>
+        Pure vegetarian · Made fresh daily
+        <span class="sep">✦</span>
+        Open daily 10AM – 10PM · Sikar, Rajasthan
+        <span class="sep">✦</span>
+      </span>
+      <span class="announce-msg" aria-hidden="true">
+        🌿 Welcome to शहर Garden!
+        <span class="sep">✦</span>
+        Use code <span class="code-pill">SHEHER10</span> for 10% off your first order
+        <span class="sep">✦</span>
+        Pure vegetarian · Made fresh daily
+        <span class="sep">✦</span>
+        Open daily 10AM – 10PM · Sikar, Rajasthan
+        <span class="sep">✦</span>
+      </span>
+    </div>
+    <button class="announce-close" id="announceClose" aria-label="Dismiss announcement">✕</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       NAVBAR
+  ═══════════════════════════════════════ -->
+  <nav>
+
+    <!-- Logo -->
+    <a class="nav-logo" href="index.html" aria-label="शहर Garden home">
+      <img src="images/logo.png" alt="शहर Garden logo"/>
+      <div class="nav-logo-text">
+        <span class="nav-logo-name">शहर Garden</span>
+        <span class="nav-logo-tagline">Cafe &amp; Kitchen</span>
+      </div>
+    </a>
+
+    <!-- Location tab -->
+    <div class="location-tab" id="locationTab" role="button" tabindex="0"
+         aria-label="Set delivery location" aria-expanded="false">
+      <span class="loc-pin">📍</span>
+      <div class="loc-text">
+        <span class="loc-label">Deliver to</span>
+        <span class="loc-value" id="locValue">Set location</span>
+      </div>
+      <span class="loc-arrow">▾</span>
+      <div class="location-dropdown" id="locationDropdown" aria-label="Delivery location picker">
+        <div class="loc-dropdown-title">Your Delivery Location</div>
+        <div class="loc-current-val" id="locCurrentVal">No location saved yet.</div>
+        <button class="btn-use-location" id="btnFetchLocation">
+          <div class="loc-spinner" id="locSpinner"></div>
+          <span class="btn-loc-label">Use My Current Location</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Desktop nav links (rendered by shared.js) -->
+    <ul class="nav-links" id="navLinks" role="list"></ul>
+
+    <!-- Desktop right: cart + sign in -->
+    <div class="nav-actions">
+      <button class="cart-btn" id="cartBtn" aria-label="View cart">
+        🛒<span class="cart-badge" id="cartBadge" aria-live="polite">0</span>
+      </button>
+      <a class="btn-signin" href="login.html">Sign In</a>
+    </div>
+
+    <!-- Mobile right: cart icon + hamburger -->
+    <div class="mobile-nav-right">
+      <button class="cart-btn" id="cartBtnMobile" aria-label="View cart">
+        🛒<span class="cart-badge" id="cartBadgeMobile" aria-live="polite">0</span>
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <div class="hamburger-bars">
+          <span></span><span></span><span></span>
+        </div>
+        <span class="hamburger-label">Menu</span>
+      </button>
+    </div>
+
+  </nav>
+
+  <!-- ═══════════════════════════════════════
+       MOBILE SLIDE MENU
+  ═══════════════════════════════════════ -->
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay" aria-hidden="true"></div>
+  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Navigation">
+
+    <div class="mobile-menu-header">
+      <div class="mobile-menu-brand">शहर Garden <em>Cafe &amp; Kitchen</em></div>
+      <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">✕</button>
+    </div>
+
+    <nav class="mobile-nav-links" id="mobileNavLinks" aria-label="Mobile navigation"></nav>
+
+    <div class="mobile-menu-footer" id="mobileMenuFooter">
+      <a class="btn-signin" href="login.html" id="mobileSignIn">Sign In</a>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CART DRAWER
+  ═══════════════════════════════════════ -->
+  <div class="cart-overlay" id="cartOverlay" aria-hidden="true"></div>
+  <div class="cart-drawer"  id="cartDrawer"  role="dialog" aria-modal="true" aria-label="Shopping cart">
+    <div class="cart-header">
+      <h3>🛒 Your Cart</h3>
+      <button class="cart-close" id="cartClose" aria-label="Close cart">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty">
+        <div style="font-size:3rem">🍽️</div>
+        <p>Your cart is empty.<br/>Add some delicious dishes!</p>
+      </div>
+    </div>
+    <div class="cart-footer" id="cartFooter" style="display:none">
+      <div class="cart-total">
+        <span>Total Amount</span>
+        <strong id="cartTotal">₹0</strong>
+      </div>
+      <button class="btn-checkout" id="checkoutBtn">Proceed to Checkout</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CONTACT HERO
+  ═══════════════════════════════════════ -->
+  <section class="contact-hero">
+    <div class="contact-hero-inner">
+      <div class="hero-tag">📍 Find Us &amp; Connect</div>
+      <h1>Reserve Your Seat,<br/><em>We're Just a Call Away</em></h1>
+      <p>Whether you want to book a table, ask a question, or simply say hello — we'd love to hear from you.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       CONTACT ACTION CARDS
+  ═══════════════════════════════════════ -->
+  <div class="actions-section">
+    <div class="actions-grid">
+
+      <a class="action-card call" href="tel:+91XXXXXXXXXX">
+        <div class="action-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="12" fill="#2d5a27"/>
+            <path d="M8.5 6.5C8.7 7.9 9.2 9.2 9.9 10.3L8.6 11.6C9.5 13.3 10.7 14.5 12.4 15.4L13.7 14.1C14.8 14.8 16.1 15.3 17.5 15.5V18C15 18.3 9.2 16.5 6 9C5.7 7.6 6 6.5 6.5 6.5H8.5Z" fill="white"/>
+          </svg>
+        </div>
+        <div class="action-label">Call Us</div>
+        <div class="action-sub">+91 XXXXX XXXXX</div>
+      </a>
+
+      <a class="action-card whatsapp" href="https://wa.me/91XXXXXXXXXX" target="_blank" rel="noopener">
+        <div class="action-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="12" fill="#25D366"/>
+            <path d="M17.5 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.6-2.1-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5C10.2 9 9.6 7.6 9.4 7.1c-.2-.4-.4-.4-.6-.4H8.3c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.7-.7 2-1.3.2-.7.2-1.2.1-1.3-.1-.1-.3-.2-.6-.3z" fill="white"/>
+          </svg>
+        </div>
+        <div class="action-label">WhatsApp</div>
+        <div class="action-sub">Chat with us</div>
+      </a>
+
+      <a class="action-card instagram" href="https://instagram.com/YOUR_USERNAME" target="_blank" rel="noopener">
+        <div class="action-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+            <defs>
+              <radialGradient id="ig-grad" cx="30%" cy="107%" r="150%">
+                <stop offset="0%"  stop-color="#fdf497"/>
+                <stop offset="5%"  stop-color="#fdf497"/>
+                <stop offset="45%" stop-color="#fd5949"/>
+                <stop offset="60%" stop-color="#d6249f"/>
+                <stop offset="90%" stop-color="#285AEB"/>
+              </radialGradient>
+            </defs>
+            <circle cx="12" cy="12" r="12" fill="url(#ig-grad)"/>
+            <rect x="7" y="7" width="10" height="10" rx="3" stroke="white" stroke-width="1.5" fill="none"/>
+            <circle cx="12" cy="12" r="2.5" stroke="white" stroke-width="1.5" fill="none"/>
+            <circle cx="15.5" cy="8.5" r="0.8" fill="white"/>
+          </svg>
+        </div>
+        <div class="action-label">Instagram</div>
+        <div class="action-sub">@Sheher_USERNAME</div>
+      </a>
+
+      <a class="action-card facebook" href="https://facebook.com/YOUR_PAGE" target="_blank" rel="noopener">
+        <div class="action-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="12" fill="#1877F2"/>
+            <path d="M13.5 7H15V5h-1.5C12.1 5 11 6.1 11 7.5V9H9.5v2H11v6h2v-6h1.5l.5-2H13V7.5c0-.3.2-.5.5-.5z" fill="white"/>
+          </svg>
+        </div>
+        <div class="action-label">Facebook</div>
+        <div class="action-sub">Sheher Cafe</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       INFO + MAP
+  ═══════════════════════════════════════ -->
+  <div class="info-map-section">
+
+    <div class="info-card">
+      <h3>Find Us Here</h3>
+
+      <div class="info-block">
+        <div class="info-icon-wrap">📍</div>
+        <div class="info-text">
+          <h4>Address</h4>
+          <p>Sheher Garden Cafe &amp; Kitchen<br/>Near Sanwali Circle<br/>Sikar, Rajasthan – 332001<br/>India</p>
+        </div>
+      </div>
+
+      <div class="info-block">
+        <div class="info-icon-wrap">📞</div>
+        <div class="info-text">
+          <h4>Phone &amp; WhatsApp</h4>
+          <p><a href="tel:+91XXXXXXXXXX">+91 XXXXX XXXXX</a></p>
+        </div>
+      </div>
+
+      <div class="info-block">
+        <div class="info-icon-wrap">🕐</div>
+        <div class="info-text">
+          <h4>Opening Hours</h4>
+          <div class="hours-row"><span class="day">Monday – Friday</span><span class="time">10:00 AM – 10:00 PM</span></div>
+          <div class="hours-row"><span class="day">Saturday</span>       <span class="time">9:00 AM – 11:00 PM</span></div>
+          <div class="hours-row"><span class="day">Sunday</span>         <span class="time">9:00 AM – 11:00 PM</span></div>
+        </div>
+      </div>
+
+      <div class="info-block">
+        <div class="info-icon-wrap">📧</div>
+        <div class="info-text">
+          <h4>Email</h4>
+          <p><a href="mailto:hello@shehercafe.in">hello@shehercafe.in</a></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="map-wrap">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57107.12345678!2d75.13985!3d27.61289!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396cb5e0a1ebffff%3A0x7e53f7c91d4e6b5a!2sSikar%2C%20Rajasthan!5e0!3m2!1sen!2sin!4v1700000000000"
+        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+        title="Sheher Garden Cafe location on Google Maps">
+      </iframe>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CLOSING
+  ═══════════════════════════════════════ -->
+  <section class="closing-section">
+    <div class="closing-inner">
+      <span class="closing-leaf">🌿</span>
+      <p class="closing-quote">"Where the city slows down.<br/>Come as you are, <em>leave with a smile.</em>"</p>
+      <p class="closing-sub">— शहर Garden Cafe &amp; Kitchen, Sikar &nbsp;·&nbsp; Open Daily 10AM – 10PM</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════ -->
+  <footer role="contentinfo">
+    <!-- Desktop grid -->
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <<div class="logo-text">शहर Garden <em>Cafe &amp; Kitchen</em></div>
+        <p>A cozy pure-vegetarian café serving delicious food crafted with love and the finest ingredients.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul id="footerLinks"></ul>
+      </div>
+      <div class="footer-col">
+        <h4>Visit Us</h4>
+        <p>📍 Sheher Cafe, Sikar<br/>Rajasthan, India</p>
+        <br/>
+        <p>🕐 Open Daily: 10AM – 10PM</p>
+      </div>
+    </div>
+    <!-- Mobile stacked -->
+    <div class="footer-mobile">
+      <div>
+        <div class="footer-mobile-brand">शहर Garden <em>Cafe &amp; Kitchen</em></div>
+        <p class="footer-mobile-desc">A cozy pure-vegetarian café<br/>crafted with love.</p>
+      </div>
+      <div class="footer-mobile-col">
+        <h5>Quick Links</h5>
+        <ul id="footerLinksMobile"></ul>
+      </div>
+      <div class="footer-mobile-col">
+        <h5>Visit Us</h5>
+        <p>📍 Sheher Cafe, Sikar<br/>Rajasthan, India<br/>🕐 Open Daily: 10AM – 10PM</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2026 <span>शहर Garden Cafe &amp; Kitchen</span> — Made with ❤️ in Sikar. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════
+       SCRIPTS — shared first, page second
+  ═══════════════════════════════════════ -->
+  <script src="js/shared.js"></script>
+  <script src="js/pages/contact.js"></script>
+
+</body>
+</html>

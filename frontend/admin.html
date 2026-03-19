@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel – शहर Garden Cafe & Kitchen</title>
+    <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/logo.png"/>
+  <link rel="apple-touch-icon" href="images/logo.png"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/pages/admin.css"/>
+  <!-- Chart.js and admin script loaded at bottom of body in order -->
+</head>
+<body>
+
+  <!-- Mobile sidebar toggle -->
+  <button class="sidebar-toggle" onclick="openSidebar()" aria-label="Open menu">☰</button>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- ══════════ SIDEBAR ══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">🌿 शहर <em>Garden</em><br/>Cafe &amp; <em>Kitchen</em></div>
+      <div class="sub">Admin Panel</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-panel="orders" onclick="showPanel('orders')">
+        <span class="nav-icon">📦</span> Orders
+        <span class="nav-badge" id="pendingBadge">0</span>
+      </div>
+      <div class="nav-item" data-panel="menu" onclick="showPanel('menu')">
+        <span class="nav-icon">🍽️</span> Menu
+      </div>
+      <div class="nav-item" data-panel="coupons" onclick="showPanel('coupons')">
+        <span class="nav-icon">🎟️</span> Coupons
+      </div>
+      <div class="nav-item" data-panel="gallery" onclick="showPanel('gallery')">
+        <span class="nav-icon">🖼️</span> Gallery
+      </div>
+      <div class="nav-item" data-panel="insights" onclick="showPanel('insights')">
+        <span class="nav-icon">📊</span> Insights
+      </div>
+      <div class="nav-item" data-panel="settings" onclick="showPanel('settings')">
+        <span class="nav-icon">⚙️</span> Settings
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a class="btn-back-site" href="index.html">← Back to Site</a>
+      <button class="btn-logout" onclick="logout()">🚪 Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- ══════════ MAIN ══════════ -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">Orders</div>
+      <div class="topbar-right">
+        <span class="refresh-info" id="lastRefresh"></span>
+        <span class="admin-badge" id="adminName">Admin</span>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ════════════════ ORDERS PANEL ════════════════ -->
+      <div class="panel active" id="panel-orders">
+
+        <div class="section-header">
+          <h2>All Orders</h2>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <span class="refresh-info" id="lastRefresh2"></span>
+            <button class="btn-outline" onclick="loadOrders()">🔄 Refresh</button>
+          </div>
+        </div>
+
+        <div class="filters-row">
+          <button class="filter-btn active" data-filter="all"             onclick="filterOrders('all',this)">All</button>
+          <button class="filter-btn" data-filter="pending"                onclick="filterOrders('pending',this)">⏳ Pending</button>
+          <button class="filter-btn" data-filter="confirmed"              onclick="filterOrders('confirmed',this)">✅ Confirmed</button>
+          <button class="filter-btn" data-filter="preparing"              onclick="filterOrders('preparing',this)">👨‍🍳 Preparing</button>
+          <button class="filter-btn" data-filter="out_for_delivery"       onclick="filterOrders('out_for_delivery',this)">🛵 Out for Delivery</button>
+          <button class="filter-btn" data-filter="delivered"              onclick="filterOrders('delivered',this)">🎉 Delivered</button>
+          <button class="filter-btn" data-filter="cancelled"              onclick="filterOrders('cancelled',this)">❌ Cancelled</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Payment</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <tr><td colspan="8" class="loading-box"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
+      <!-- ════════════════ MENU PANEL ════════════════ -->
+      <div class="panel" id="panel-menu">
+        <div class="section-header">
+          <h2>Menu Items</h2>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-outline" onclick="openAddCategoryModal()">+ Category</button>
+            <button class="btn-primary" onclick="openAddDishModal()">+ Add Dish</button>
+          </div>
+        </div>
+
+        <!-- Category chips -->
+        <div class="cat-chips" id="catChipsBar">
+          <div class="cat-chip active" onclick="filterMenuByCat('all',this)">All</div>
+        </div>
+
+        <div id="menuAdminGrid">
+          <div class="loading-box"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+
+      <!-- ════════════════ COUPONS PANEL ════════════════ -->
+      <div class="panel" id="panel-coupons">
+        <div class="section-header">
+          <h2>Coupons</h2>
+          <button class="btn-primary" onclick="openAddCouponModal()">+ Add Coupon</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Discount</th>
+                <th>First Time Only</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="couponsTableBody">
+              <tr><td colspan="6" class="loading-box"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
+      <!-- ════════════════ GALLERY PANEL ════════════════ -->
+      <div class="panel" id="panel-gallery">
+        <div class="section-header">
+          <h2>Gallery</h2>
+          <button class="btn-primary" onclick="openGalleryPostModal()">+ New Post</button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="gallery-tabs">
+          <div class="gallery-tab active" data-tab="official" onclick="loadGallery('official')">
+            ⭐ Official Posts
+          </div>
+          <div class="gallery-tab" data-tab="community" onclick="loadGallery('community')">
+            👥 Community
+          </div>
+          <div class="gallery-tab" data-tab="reported" onclick="loadGallery('reported')">
+            ⚑ Reported
+            <span class="gallery-tab-badge" id="reportedBadge" style="display:none">0</span>
+          </div>
+        </div>
+
+        <div id="galleryContent">
+          <div class="loading-box"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+
+      <!-- ════════════════ INSIGHTS PANEL ════════════════ -->
+      <div class="panel" id="panel-insights">
+        <div class="section-header">
+          <h2>Insights</h2>
+        </div>
+
+        <!-- Time range selector -->
+        <div class="insights-range-bar">
+          <label>Period:</label>
+          <button class="filter-btn range-btn" data-range="today"    onclick="loadInsights('today')">Today</button>
+          <button class="filter-btn range-btn active" data-range="week" onclick="loadInsights('week')">Last 7 Days</button>
+          <button class="filter-btn range-btn" data-range="month"   onclick="loadInsights('month')">Last 30 Days</button>
+          <button class="filter-btn range-btn" data-range="year"    onclick="loadInsights('year')">Last Year</button>
+          <button class="filter-btn range-btn" data-range="lifetime" onclick="loadInsights('lifetime')">Lifetime</button>
+        </div>
+
+        <div id="insightsContent">
+          <div class="loading-box"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+
+      <!-- ════════════════ SETTINGS PANEL ════════════════ -->
+      <div class="panel" id="panel-settings">
+        <div class="section-header">
+          <h2>Store Settings</h2>
+        </div>
+        <div class="settings-grid">
+
+          <div class="setting-card">
+            <h3>🛵 Delivery Settings</h3>
+            <div class="form-group">
+              <label>Delivery Charge (₹)</label>
+              <input type="number" id="set_delivery_charge" placeholder="e.g. 30"/>
+            </div>
+            <div class="form-group">
+              <label>Free Delivery Above (₹)</label>
+              <input type="number" id="set_free_above" placeholder="e.g. 500"/>
+            </div>
+            <div class="form-group">
+              <label>Minimum Order Value (₹)</label>
+              <input type="number" id="set_min_order" placeholder="e.g. 250"/>
+            </div>
+            <button class="btn-primary" onclick="saveDeliverySettings()">Save Settings</button>
+          </div>
+
+          <div class="setting-card">
+            <h3>⏱️ Delivery Time</h3>
+            <div class="form-group">
+              <label>Estimated Delivery Time</label>
+              <input type="text" id="set_delivery_time" placeholder="e.g. 30–45 minutes"/>
+            </div>
+            <p style="font-size:0.76rem;color:var(--text-mid);margin-bottom:14px;line-height:1.5">
+              Shown to customers on the checkout page and order confirmation.
+            </p>
+            <button class="btn-primary" onclick="saveDeliveryTime()">Save Time</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- end content -->
+  </div><!-- end main -->
+
+
+  <!-- ════ ADD / EDIT DISH MODAL ════ -->
+  <div class="modal-overlay" id="dishModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="dishModalTitle">Add New Dish</h3>
+        <button class="modal-close" onclick="closeDishModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="dish_id"/>
+        <div class="form-group">
+          <label>Dish Name *</label>
+          <input type="text" id="dish_name" placeholder="e.g. Margherita Pizza"/>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="dish_category">
+              <option value="">Select category</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Price (₹) *</label>
+            <input type="number" id="dish_price" placeholder="e.g. 250"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="dish_description" placeholder="Brief description…"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Dish Image</label>
+          <div id="dish_image_preview"
+            style="width:100%;height:120px;background:#f0ede6;border-radius:10px;display:flex;align-items:center;justify-content:center;border:2px dashed #d0c8be;overflow:hidden;margin-bottom:8px;cursor:pointer;"
+            onclick="document.getElementById('dish_image_file').click()">
+            <span style="font-size:0.82rem;color:var(--text-mid)">📷 Click to upload image</span>
+          </div>
+          <input type="file" id="dish_image_file" accept="image/*" style="display:none" onchange="handleImageFile(this)"/>
+          <input type="hidden" id="dish_image"/>
+        </div>
+        <div class="form-group">
+          <label>Visibility</label>
+          <select id="dish_available">
+            <option value="true">✅ Visible to customers</option>
+            <option value="false">❌ Hidden from menu</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeDishModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveDish()">
+          <span id="dishSaveBtnText">Add Dish</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════ ADD CATEGORY MODAL ════ -->
+  <div class="modal-overlay" id="categoryModal">
+    <div class="modal" style="max-width:380px">
+      <div class="modal-header">
+        <h3>Add New Category</h3>
+        <button class="modal-close" onclick="closeCategoryModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Category Name *</label>
+          <input type="text" id="newCatName" placeholder="e.g. Desserts, Beverages…"/>
+        </div>
+        <p style="font-size:0.76rem;color:var(--text-mid);line-height:1.5">
+          Once you add a dish to this category, its image will automatically appear in the category bar.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeCategoryModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveCategory()">Add Category</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════ ADD COUPON MODAL ════ -->
+  <div class="modal-overlay" id="couponModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Add New Coupon</h3>
+        <button class="modal-close" onclick="closeCouponModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Coupon Code *</label>
+          <input type="text" id="cp_code" placeholder="e.g. WELCOME20"
+            style="text-transform:uppercase;letter-spacing:1px;"/>
+        </div>
+        <div class="form-group">
+          <label>Discount Percentage *</label>
+          <input type="number" id="cp_discount" placeholder="e.g. 20" min="1" max="100"/>
+        </div>
+        <div class="form-group">
+          <label>First Time Users Only?</label>
+          <select id="cp_first_time">
+            <option value="true">Yes — only for first order</option>
+            <option value="false">No — for all users</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Active?</label>
+          <select id="cp_active">
+            <option value="true">Yes — active</option>
+            <option value="false">No — inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeCouponModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveCoupon()">Create Coupon</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════ NEW GALLERY POST MODAL ════ -->
+  <div class="modal-overlay" id="galleryPostModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>New Official Post</h3>
+        <button class="modal-close" onclick="closeGalleryPostModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Image *</label>
+          <div class="upload-dropzone" id="galleryDropzone"
+            onclick="document.getElementById('gallery_image_file').click()">
+            <div class="dz-icon">🖼️</div>
+            <div class="dz-text">Click to select image<br/>
+              <small>JPG, PNG, WEBP, GIF · max 10MB</small>
+            </div>
+          </div>
+          <input type="file" id="gallery_image_file" accept="image/*"
+            style="display:none" onchange="handleGalleryImageFile(this)"/>
+        </div>
+        <div class="form-group">
+          <label>Caption</label>
+          <textarea id="gallery_caption" placeholder="Share what's happening at the cafe…" style="min-height:60px"></textarea>
+        </div>
+        <p style="font-size:0.74rem;color:var(--text-mid);line-height:1.5">
+          This post will appear on the public gallery page with the
+          <strong>शहर Garden Cafe &amp; Kitchen</strong> name and ⭐ Official badge.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeGalleryPostModal()">Cancel</button>
+        <button class="btn-primary" id="galleryPostSaveBtn" onclick="saveGalleryPost()">Publish Post</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════ EDIT GALLERY POST MODAL ════ -->
+  <div class="modal-overlay" id="editGalleryPostModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Edit Official Post</h3>
+        <button class="modal-close" onclick="closeEditGalleryPostModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit_post_id"/>
+        <div class="form-group">
+          <label>Current Image</label>
+          <div id="editGalleryCurrentImg"
+            style="width:100%;height:140px;background:#f0ede6;border-radius:10px;overflow:hidden;margin-bottom:8px;display:flex;align-items:center;justify-content:center;">
+            <span style="font-size:0.82rem;color:var(--text-mid)">No image</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Replace Image <span style="font-size:0.74rem;color:var(--text-mid);font-weight:400">(optional — leave blank to keep current)</span></label>
+          <div class="upload-dropzone" id="editGalleryDropzone"
+            onclick="document.getElementById('edit_gallery_image_file').click()"
+            style="height:100px;">
+            <div class="dz-icon" style="font-size:1.4rem">🖼️</div>
+            <div class="dz-text">Click to select new image<br/>
+              <small>JPG, PNG, WEBP, GIF · max 10MB</small>
+            </div>
+          </div>
+          <input type="file" id="edit_gallery_image_file" accept="image/*"
+            style="display:none" onchange="handleEditGalleryImageFile(this)"/>
+        </div>
+        <div class="form-group">
+          <label>Caption</label>
+          <textarea id="edit_gallery_caption" placeholder="Share what's happening at the cafe…" style="min-height:60px"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Visibility</label>
+          <select id="edit_gallery_visible">
+            <option value="true">✅ Visible on gallery page</option>
+            <option value="false">❌ Hidden from gallery page</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeEditGalleryPostModal()">Cancel</button>
+        <button class="btn-primary" id="editGalleryPostSaveBtn" onclick="saveEditGalleryPost()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════ CONFIRM DIALOG ════ -->
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+      <div class="icon" id="confirmIcon">⚠️</div>
+      <h3 id="confirmTitle">Are you sure?</h3>
+      <p id="confirmMsg">This action cannot be undone.</p>
+      <div class="confirm-actions">
+        <button class="btn-cancel" onclick="closeConfirm()">Cancel</button>
+        <button class="btn-primary btn-danger" onclick="confirmOk()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="js/pages/admin.js"></script>
+</body>
+</html>

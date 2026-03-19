@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Menu – शहर Garden Cafe &amp; Kitchen</title>
+  <meta name="description" content="Explore our full vegetarian menu — pizzas, pastas, sandwiches, milkshakes and more. Order online from Sheher Garden Cafe, Sikar, Rajasthan."/>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/logo.png"/>
+  <link rel="apple-touch-icon" href="images/logo.png"/>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+  <!-- CSS: shared first, then page-specific -->
+  <link rel="stylesheet" href="css/shared.css"/>
+  <link rel="stylesheet" href="css/pages/menu.css"/>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════
+       ANNOUNCEMENT BAR
+  ═══════════════════════════════════════ -->
+  <div class="announce-bar" id="announceBar" role="banner" aria-label="Promotion">
+    <div class="announce-ticker" aria-hidden="true">
+      <!-- First copy -->
+      <span class="announce-msg">
+        Welcome to शहर Garden!
+        <span class="sep">✦</span>
+        Use code <span class="code-pill">SHEHER10</span> for 10% off your first order
+        <span class="sep">✦</span>
+        Pure vegetarian · Made fresh daily
+        <span class="sep">✦</span>
+        Open daily 10AM – 10PM · Sikar, Rajasthan
+        <span class="sep">✦</span>
+      </span>
+      <!-- Duplicate for seamless loop -->
+      <span class="announce-msg" aria-hidden="true">
+        Welcome to शहर Garden!
+        <span class="sep">✦</span>
+        Use code <span class="code-pill">SHEHER10</span> for 10% off your first order
+        <span class="sep">✦</span>
+        Pure vegetarian · Made fresh daily
+        <span class="sep">✦</span>
+        Open daily 10AM – 10PM · Sikar, Rajasthan
+        <span class="sep">✦</span>
+      </span>
+    </div>
+    <button class="announce-close" id="announceClose" aria-label="Dismiss announcement">✕</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       NAVBAR
+  ═══════════════════════════════════════ -->
+  <nav role="navigation" aria-label="Main navigation">
+
+    <!-- Logo -->
+    <a class="nav-logo" href="index.html" aria-label="शहर Garden home">
+      <img src="images/logo.png" alt="शहर Garden logo"/>
+      <div class="nav-logo-text">
+        <span class="nav-logo-name">शहर Garden</span>
+        <span class="nav-logo-tagline">Cafe &amp; Kitchen</span>
+      </div>
+    </a>
+
+    <!-- Location tab -->
+    <div class="location-tab" id="locationTab" role="button" tabindex="0"
+         aria-label="Set delivery location" aria-expanded="false">
+      <span class="loc-pin">📍</span>
+      <div class="loc-text">
+        <span class="loc-label">Deliver to</span>
+        <span class="loc-value" id="locValue">Set location</span>
+      </div>
+      <span class="loc-arrow">▾</span>
+      <div class="location-dropdown" id="locationDropdown" aria-label="Delivery location picker">
+        <div class="loc-dropdown-title">Your Delivery Location</div>
+        <div class="loc-current-val" id="locCurrentVal">No location saved yet.</div>
+        <button class="btn-use-location" id="btnFetchLocation">
+          <div class="loc-spinner" id="locSpinner"></div>
+          <span class="btn-loc-label">Use My Current Location</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Desktop nav links (rendered by shared.js) -->
+    <ul class="nav-links" id="navLinks" role="list"></ul>
+
+    <!-- Desktop right: cart + sign in -->
+    <div class="nav-actions">
+      <button class="cart-btn" id="cartBtn" aria-label="View cart">
+        🛒<span class="cart-badge" id="cartBadge" aria-live="polite">0</span>
+      </button>
+      <a class="btn-signin" href="login.html">Sign In</a>
+    </div>
+
+    <!-- Mobile right: cart icon + hamburger (outside menu) -->
+    <div class="mobile-nav-right">
+      <button class="cart-btn" id="cartBtnMobile" aria-label="View cart">
+        🛒<span class="cart-badge" id="cartBadgeMobile" aria-live="polite">0</span>
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <div class="hamburger-bars">
+          <span></span><span></span><span></span>
+        </div>
+        <span class="hamburger-label">Menu</span>
+      </button>
+    </div>
+
+  </nav>
+
+  <!-- ═══════════════════════════════════════
+       MOBILE SLIDE MENU (from right, green)
+  ═══════════════════════════════════════ -->
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay" aria-hidden="true"></div>
+  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Navigation">
+
+    <div class="mobile-menu-header">
+      <div class="mobile-menu-brand">शहर Garden <em>Cafe &amp; Kitchen</em></div>
+      <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">✕</button>
+    </div>
+
+    <!-- Nav links injected by shared.js -->
+    <nav class="mobile-nav-links" id="mobileNavLinks" aria-label="Mobile navigation"></nav>
+
+    <!-- Auth footer -->
+    <div class="mobile-menu-footer" id="mobileMenuFooter">
+      <a class="btn-signin" href="login.html" id="mobileSignIn">Sign In</a>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CART DRAWER
+  ═══════════════════════════════════════ -->
+  <div class="cart-overlay" id="cartOverlay" aria-hidden="true"></div>
+  <div class="cart-drawer"  id="cartDrawer"  role="dialog" aria-modal="true" aria-label="Shopping cart">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button class="cart-close" id="cartClose" aria-label="Close cart">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty">
+        <div style="font-size:3rem">🍽️</div>
+        <p>Your cart is empty.<br/>Add some delicious dishes!</p>
+      </div>
+    </div>
+    <div class="cart-footer" id="cartFooter" style="display:none;">
+      <div class="cart-total">
+        <span>Total Amount</span>
+        <strong id="cartTotal">₹0</strong>
+      </div>
+      <button class="btn-checkout" id="checkoutBtn">Proceed to Checkout</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════ -->
+  <section class="hero" aria-label="Menu hero">
+    <div class="hero-content">
+      <div class="hero-tag">Pure Vegetarian</div>
+      <h1>Our <em>Delicious</em><br/>Menu</h1>
+      <p>Crafted with the finest ingredients — from cheesy pizzas to creamy milkshakes, every dish tells a story.</p>
+
+      <!-- Search bar -->
+      <div class="hero-search" id="heroSearch" role="search">
+        <input type="text" id="heroSearchInput"
+               placeholder="Search dishes, e.g. Pizza, Pasta…"
+               autocomplete="off" aria-label="Search dishes"/>
+        <button class="hero-search-btn" id="heroSearchBtn">Search</button>
+        <div class="search-results" id="searchResults" role="listbox" aria-label="Search suggestions"></div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="num">26+</div><div class="lbl">Dishes</div></div>
+        <div class="hero-stat"><div class="num">5</div><div class="lbl">Categories</div></div>
+        <div class="hero-stat"><div class="num">100%</div><div class="lbl">Veg</div></div>
+      </div>
+    </div>
+
+    <!-- Decorative circles (hidden on mobile via CSS) -->
+    <div class="hero-deco" aria-hidden="true">
+      <div class="hero-deco-row">
+        <div class="hero-deco-circle"><img src="images/margherita_pizza.png" alt=""/></div>
+        <div class="hero-deco-circle"><img src="images/red_sause_pasta.png" alt=""/></div>
+      </div>
+      <div class="hero-deco-row">
+        <div class="hero-deco-circle"><img src="images/chocolate_milkshake.png" alt=""/></div>
+        <div class="hero-deco-circle"><img src="images/veg_chowmein.png" alt=""/></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       MAIN CONTENT
+  ═══════════════════════════════════════ -->
+  <div class="container">
+
+    <!-- CATEGORIES -->
+    <section class="categories-section" aria-label="Menu categories">
+      <h2>Explore Our Menu</h2>
+      <p>Tap a category to filter dishes</p>
+
+      <!-- Horizontal scroll wrapper — drag on desktop, swipe on mobile -->
+      <div class="categories-scroll-wrap" role="list" aria-label="Menu categories">
+        <div class="categories-row" id="categoriesRow">
+          <div class="cat-item active" data-cat="All" role="listitem" tabindex="0">
+            <div class="cat-circle all-circle" aria-hidden="true">🍽️</div>
+            <span class="cat-label">All</span>
+          </div>
+          <div class="cat-item" data-cat="Pizza" role="listitem" tabindex="0">
+            <div class="cat-circle"><img src="images/margherita_pizza.png" alt="Pizza" loading="lazy"/></div>
+            <span class="cat-label">Pizza</span>
+          </div>
+          <div class="cat-item" data-cat="Pasta" role="listitem" tabindex="0">
+            <div class="cat-circle"><img src="images/red_sause_pasta.png" alt="Pasta" loading="lazy"/></div>
+            <span class="cat-label">Pasta</span>
+          </div>
+          <div class="cat-item" data-cat="Sandwiches" role="listitem" tabindex="0">
+            <div class="cat-circle"><img src="images/veg_grilled_sandwich.png" alt="Sandwiches" loading="lazy"/></div>
+            <span class="cat-label">Sandwiches</span>
+          </div>
+          <div class="cat-item" data-cat="Milkshakes" role="listitem" tabindex="0">
+            <div class="cat-circle"><img src="images/vanilla_milkshake.png" alt="Milkshakes" loading="lazy"/></div>
+            <span class="cat-label">Milkshakes</span>
+          </div>
+          <div class="cat-item" data-cat="Chinese" role="listitem" tabindex="0">
+            <div class="cat-circle"><img src="images/veg_chowmein.png" alt="Chinese" loading="lazy"/></div>
+            <span class="cat-label">Chinese</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider" aria-hidden="true"></div>
+
+    <!-- MENU GRID -->
+    <section class="menu-section" aria-label="Dish list">
+      <div id="menuGrid" class="menu-grid" role="list">
+        <div class="state-box">
+          <div class="spinner" aria-hidden="true"></div>
+          <p>Loading menu…</p>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /.container -->
+
+  <!-- ═══════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════ -->
+  <footer role="contentinfo">
+    <!-- Desktop grid -->
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo-text">शहर Garden <em>Cafe &amp; Kitchen</em></div>
+        <p>A cozy pure-vegetarian café serving delicious food crafted with love and the finest ingredients.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul id="footerLinks"></ul>
+      </div>
+      <div class="footer-col">
+        <h4>Visit Us</h4>
+        <p>📍 Sheher Cafe, Sikar<br/>Rajasthan, India</p>
+        <br/>
+        <p>🕐 Open Daily: 10AM – 10PM</p>
+      </div>
+    </div>
+    <!-- Mobile stacked -->
+    <div class="footer-mobile">
+      <div>
+        <div class="footer-mobile-brand">शहर Garden <em>Cafe &amp; Kitchen</em></div>
+        <p class="footer-mobile-desc">A cozy pure-vegetarian café<br/>crafted with love.</p>
+      </div>
+      <div class="footer-mobile-col">
+        <h5>Quick Links</h5>
+        <ul id="footerLinksMobile"></ul>
+      </div>
+      <div class="footer-mobile-col">
+        <h5>Visit Us</h5>
+        <p>📍 Sheher Cafe, Sikar<br/>Rajasthan, India<br/>🕐 Open Daily: 10AM – 10PM</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2026 <span>शहर Garden Cafe &amp; Kitchen</span> — Made with ❤️ in Sikar. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════
+       SCRIPTS — shared first, page second
+  ═══════════════════════════════════════ -->
+  <script src="js/shared.js"></script>
+  <script src="js/pages/menu.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Orders – शहर Garden Cafe &amp; Kitchen</title>
+  <link rel="icon" type="image/png" href="images/logo.png"/>
+  <link rel="apple-touch-icon" href="images/logo.png"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/shared.css"/>
+
+  <style>
+    :root {
+      --green:       #2d5a27;
+      --green-light: #4a7c42;
+      --green-dark:  #1a3516;
+      --gold:        #e8a020;
+      --gold-light:  #f5c842;
+      --cream:       #fdf8f0;
+      --white:       #ffffff;
+      --text-dark:   #1a1a1a;
+      --text-mid:    #555;
+      --error:       #e53e3e;
+      --success:     #38a169;
+      --shadow:      0 4px 24px rgba(0,0,0,0.10);
+      --shadow-lg:   0 12px 40px rgba(0,0,0,0.16);
+      --radius:      16px;
+      --transition:  0.2s ease;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Poppins',sans-serif; background:var(--cream); color:var(--text-dark); min-height:100vh; }
+    a { color:inherit; text-decoration:none; }
+    button { cursor:pointer; font-family:'Poppins',sans-serif; }
+
+    /* ── NAVBAR ── */
+    nav {
+      background:var(--white); display:flex; align-items:center;
+      justify-content:space-between; padding:0 48px; height:70px;
+      box-shadow:0 2px 12px rgba(0,0,0,0.07); position:sticky; top:0; z-index:100;
+    }
+    .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .nav-logo img { height:44px; width:44px; border-radius:50%; object-fit:cover; }
+    .nav-logo-text { display:flex; flex-direction:column; line-height:1.2; }
+    .nav-logo-name    { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--green); font-weight:700; }
+    .nav-logo-tagline { font-size:0.62rem; color:var(--text-mid); text-transform:uppercase; letter-spacing:0.5px; }
+    .nav-back { display:flex; align-items:center; gap:6px; color:var(--text-mid); font-size:0.88rem; font-weight:500; transition:color var(--transition); }
+    .nav-back:hover { color:var(--green); }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background:linear-gradient(135deg,var(--green-dark) 0%,var(--green) 60%,#3a7030 100%);
+      padding:36px 48px; position:relative; overflow:hidden;
+    }
+    .page-header::before { content:''; position:absolute; width:300px; height:300px; border-radius:50%; background:rgba(232,160,32,0.08); top:-100px; right:-60px; pointer-events:none; }
+    .page-header::after  { content:''; position:absolute; width:180px; height:180px; border-radius:50%; background:rgba(255,255,255,0.04); bottom:-60px; left:120px; pointer-events:none; }
+    .page-header-inner { position:relative; z-index:2; max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; }
+    .page-header h1 { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--white); margin-bottom:4px; }
+    .page-header p  { color:rgba(255,255,255,0.65); font-size:0.88rem; }
+    .btn-refresh {
+      display:flex; align-items:center; gap:6px;
+      background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25);
+      color:var(--white); padding:8px 16px; border-radius:24px;
+      font-size:0.82rem; font-weight:600; transition:all var(--transition); flex-shrink:0;
+    }
+    .btn-refresh:hover { background:rgba(255,255,255,0.22); }
+    .btn-refresh .spin { display:inline-block; transition:transform 0.4s; }
+    .btn-refresh.loading .spin { animation:spin 0.7s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* ── MAIN LAYOUT ── */
+    .page-body { max-width:860px; margin:0 auto; padding:32px 24px 80px; }
+
+    /* ── SECTION LABELS ── */
+    .section-label {
+      font-size:0.72rem; font-weight:700; text-transform:uppercase;
+      letter-spacing:1px; color:var(--text-mid); margin-bottom:14px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .section-label::after { content:''; flex:1; height:1px; background:#e8e0d4; }
+
+    /* ── LOADING ── */
+    .loading-wrap { text-align:center; padding:60px 24px; color:var(--text-mid); }
+    .loader { width:36px; height:36px; border:3px solid #e0d8cc; border-top-color:var(--green); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 12px; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { text-align:center; padding:64px 24px; }
+    .empty-icon { font-size:4rem; margin-bottom:16px; opacity:0.6; }
+    .empty-state h3 { font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--green); margin-bottom:8px; }
+    .empty-state p { color:var(--text-mid); font-size:0.9rem; margin-bottom:24px; line-height:1.7; max-width:320px; margin-left:auto; margin-right:auto; }
+    .btn-browse {
+      display:inline-flex; align-items:center; gap:8px;
+      background:var(--green); color:var(--white);
+      padding:12px 28px; border-radius:12px; font-size:0.92rem; font-weight:600;
+      transition:background var(--transition), transform var(--transition);
+    }
+    .btn-browse:hover { background:var(--green-light); transform:translateY(-1px); }
+
+    /* ── ORDER CARD ── */
+    .order-card {
+      background:var(--white); border-radius:var(--radius);
+      box-shadow:var(--shadow); margin-bottom:16px;
+      border:1px solid #f0ede6; overflow:hidden;
+      transition:box-shadow var(--transition);
+    }
+    .order-card:hover { box-shadow:var(--shadow-lg); }
+
+    .order-card-header {
+      padding:18px 20px; display:flex; align-items:center;
+      gap:12px; cursor:pointer; user-select:none;
+    }
+    .order-card-header:hover { background:#fdfaf6; }
+
+    .order-id-badge {
+      background:var(--cream); border:1px solid #e8e0d4;
+      border-radius:8px; padding:6px 10px; flex-shrink:0; text-align:center;
+    }
+    .order-id-badge .label { font-size:0.60rem; color:var(--text-mid); text-transform:uppercase; letter-spacing:0.5px; display:block; }
+    .order-id-badge .value { font-size:0.82rem; font-weight:700; color:var(--text-dark); font-family:monospace; letter-spacing:1px; }
+
+    .order-meta { flex:1; min-width:0; }
+    .order-meta .items-preview { font-size:0.88rem; font-weight:600; color:var(--text-dark); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:3px; }
+    .order-meta .order-date    { font-size:0.76rem; color:var(--text-mid); }
+
+    .order-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0; }
+    .order-total { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--green); font-weight:700; }
+
+    /* Status badges */
+    .status-badge {
+      display:inline-flex; align-items:center; gap:5px;
+      padding:3px 10px; border-radius:20px; font-size:0.72rem; font-weight:700;
+      text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap;
+    }
+    .status-badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
+    .status-pending       { background:#fff8e6; color:#b7791f; }
+    .status-confirmed     { background:#e6f4ff; color:#2b6cb0; }
+    .status-preparing     { background:#fef3e2; color:#c05621; }
+    .status-out_for_delivery { background:#f0e6ff; color:#6b46c1; }
+    .status-delivered     { background:#f0fff4; color:#276749; }
+    .status-cancelled     { background:#fff5f5; color:#c53030; }
+
+    .chevron { font-size:0.8rem; color:var(--text-mid); transition:transform var(--transition); margin-left:4px; flex-shrink:0; }
+    .order-card.expanded .chevron { transform:rotate(180deg); }
+
+    /* ── ORDER DETAILS (expanded) ── */
+    .order-details {
+      display:none; border-top:1px solid #f0ede6;
+      padding:0 20px;
+      animation:slideDown 0.2s ease;
+    }
+    @keyframes slideDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+    .order-card.expanded .order-details { display:block; }
+
+    .details-section { padding:16px 0; border-bottom:1px solid #f5f0e8; }
+    .details-section:last-child { border-bottom:none; }
+    .details-title { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-mid); margin-bottom:10px; }
+
+    .detail-items-list { display:flex; flex-direction:column; gap:8px; }
+    .detail-item { display:flex; justify-content:space-between; align-items:center; font-size:0.88rem; }
+    .detail-item .name { color:var(--text-dark); }
+    .detail-item .price { color:var(--gold); font-weight:600; }
+
+    .detail-totals { display:flex; flex-direction:column; gap:6px; }
+    .detail-row { display:flex; justify-content:space-between; font-size:0.85rem; color:var(--text-mid); }
+    .detail-row.total { font-size:1rem; font-weight:700; color:var(--text-dark); padding-top:8px; border-top:1px dashed #e8e0d4; margin-top:4px; }
+    .detail-row.discount { color:var(--success); }
+
+    .detail-address { font-size:0.85rem; color:var(--text-mid); line-height:1.7; }
+    .detail-address strong { color:var(--text-dark); display:block; margin-bottom:2px; }
+
+    .detail-notes { font-size:0.85rem; color:var(--text-mid); font-style:italic; background:var(--cream); padding:10px 12px; border-radius:8px; }
+
+    /* ── ACTION BUTTONS ── */
+    .order-actions { padding:14px 0 18px; display:flex; gap:10px; flex-wrap:wrap; }
+
+    .btn-track {
+      display:inline-flex; align-items:center; gap:6px;
+      background:var(--green); color:var(--white);
+      padding:9px 18px; border-radius:10px; font-size:0.85rem; font-weight:600;
+      border:none; transition:background var(--transition), transform var(--transition);
+    }
+    .btn-track:hover { background:var(--green-light); transform:translateY(-1px); }
+
+    .btn-reorder {
+      display:inline-flex; align-items:center; gap:6px;
+      background:var(--cream); color:var(--green);
+      padding:9px 18px; border-radius:10px; font-size:0.85rem; font-weight:600;
+      border:2px solid var(--green); transition:all var(--transition);
+    }
+    .btn-reorder:hover { background:var(--green); color:var(--white); }
+
+    .btn-cancel {
+      display:inline-flex; align-items:center; gap:6px;
+      background:#fff5f5; color:var(--error);
+      padding:9px 18px; border-radius:10px; font-size:0.85rem; font-weight:600;
+      border:2px solid #fed7d7; transition:all var(--transition);
+    }
+    .btn-cancel:hover { background:var(--error); color:var(--white); border-color:var(--error); }
+    .btn-cancel:disabled { opacity:0.5; cursor:not-allowed; }
+
+    /* ── ACTIVE ORDER CARD (special styling) ── */
+    .order-card.active-order {
+      border:2px solid var(--green);
+      box-shadow:0 4px 20px rgba(45,90,39,0.12);
+    }
+    .active-order .order-card-header { background:linear-gradient(135deg,rgba(45,90,39,0.03),rgba(45,90,39,0.06)); }
+    .active-badge {
+      background:var(--green); color:var(--white);
+      font-size:0.65rem; font-weight:700; padding:2px 8px; border-radius:20px;
+      text-transform:uppercase; letter-spacing:0.5px; margin-left:6px;
+      animation:pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+    /* ── MINI PROGRESS ── */
+    .mini-progress { padding:12px 20px 14px; background:rgba(45,90,39,0.03); border-top:1px solid rgba(45,90,39,0.10); display:flex; align-items:center; gap:0; overflow:hidden; }
+    .mp-step { display:flex; flex-direction:column; align-items:center; flex:1; position:relative; }
+    .mp-step:not(:last-child)::after { content:''; position:absolute; top:10px; left:50%; width:100%; height:2px; background:#e0d8cc; z-index:0; }
+    .mp-step.done:not(:last-child)::after,
+    .mp-step.active:not(:last-child)::after { background:var(--green); }
+    .mp-dot { width:20px; height:20px; border-radius:50%; background:#e0d8cc; border:2px solid #e0d8cc; position:relative; z-index:1; transition:all 0.3s; display:flex; align-items:center; justify-content:center; font-size:0.6rem; }
+    .mp-step.done .mp-dot   { background:var(--green); border-color:var(--green); color:var(--white); }
+    .mp-step.active .mp-dot { background:var(--white); border-color:var(--green); box-shadow:0 0 0 3px rgba(45,90,39,0.15); }
+    .mp-label { font-size:0.60rem; color:var(--text-mid); margin-top:5px; text-align:center; font-weight:500; }
+    .mp-step.done .mp-label, .mp-step.active .mp-label { color:var(--green); font-weight:600; }
+
+    /* ── LOGIN WALL ── */
+    #loginWall { display:none; text-align:center; padding:80px 24px; }
+    #loginWall .icon { font-size:3rem; margin-bottom:16px; }
+    #loginWall h3 { font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--green); margin-bottom:8px; }
+    #loginWall p { color:var(--text-mid); margin-bottom:24px; }
+    .btn-login { display:inline-flex; align-items:center; gap:8px; background:var(--green); color:var(--white); padding:12px 28px; border-radius:12px; font-size:0.92rem; font-weight:600; transition:background var(--transition); }
+    .btn-login:hover { background:var(--green-light); }
+
+    /* ── TOAST ── */
+    .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--text-dark); color:var(--white); padding:12px 20px; border-radius:12px; font-size:0.88rem; font-weight:500; z-index:9000; transition:transform 0.3s ease; white-space:nowrap; box-shadow:var(--shadow-lg); pointer-events:none; }
+    .toast.show { transform:translateX(-50%) translateY(0); }
+    .toast.success { background:var(--success); }
+    .toast.error   { background:var(--error); }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:700px) {
+      nav { padding:0 16px; }
+      .page-header { padding:24px 20px; }
+      .page-header h1 { font-size:1.4rem; }
+      .page-header-inner { flex-direction:column; align-items:flex-start; gap:12px; }
+      .page-body { padding:20px 16px 80px; }
+
+      /* Card header becomes 2-row layout on mobile */
+      .order-card-header {
+        padding:14px 14px; flex-wrap:wrap; gap:8px;
+      }
+      .order-id-badge { order:1; }
+      .order-meta     { order:2; flex:1; min-width:0; }
+      .chevron        { order:3; align-self:flex-start; margin-top:2px; }
+      .order-right    { order:4; flex-direction:row; align-items:center; gap:8px; width:100%; justify-content:space-between; padding-top:8px; border-top:1px solid #f0ede6; margin-top:2px; }
+      .order-total    { font-size:1rem; }
+
+      /* Status badge smaller on mobile */
+      .status-badge { font-size:0.68rem; padding:3px 8px; }
+
+      .order-details { padding:0 14px; }
+      .order-actions { flex-direction:column; }
+      .btn-track, .btn-reorder, .btn-cancel { width:100%; justify-content:center; padding:11px 18px; }
+
+      .mini-progress { padding:10px 14px 12px; gap:0; }
+      .mp-label { font-size:0.52rem; }
+      .mp-dot   { width:18px; height:18px; font-size:0.55rem; }
+    }
+
+    @media(max-width:400px) {
+      .order-id-badge .value { font-size:0.75rem; }
+      .order-meta .items-preview { font-size:0.80rem; }
+      .mp-label { display:none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a class="nav-logo" href="index.html">
+      <img src="images/logo.png" alt="शहर Garden" onerror="this.style.display='none'"/>
+      <div class="nav-logo-text">
+        <span class="nav-logo-name">🌿 शहर Garden</span>
+        <span class="nav-logo-tagline">Cafe &amp; Kitchen</span>
+      </div>
+    </a>
+    <a class="nav-back" href="index.html">
+      ← Back to Home
+    </a>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div>
+        <h1>📦 My Orders</h1>
+        <p>Track your current orders and view order history</p>
+      </div>
+      <button class="btn-refresh" id="btnRefresh" onclick="loadOrders()">
+        <span class="spin">↻</span> Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="page-body">
+
+    <!-- Login wall -->
+    <div id="loginWall">
+      <div class="icon">🔒</div>
+      <h3>Sign in to view orders</h3>
+      <p>You need to be logged in to see your order history.</p>
+      <a class="btn-login" href="login.html">Sign In</a>
+    </div>
+
+    <!-- Loading -->
+    <div id="loadingState" style="display:none">
+      <div class="loading-wrap">
+        <div class="loader"></div>
+        <p>Loading your orders…</p>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="emptyState" style="display:none">
+      <div class="empty-state">
+        <div class="empty-icon">🍽️</div>
+        <h3>No orders yet</h3>
+        <p>Looks like you haven't placed any orders yet. Browse our menu and order something delicious!</p>
+        <a class="btn-browse" href="menu.html">🌿 Browse Menu</a>
+      </div>
+    </div>
+
+    <!-- Active orders section -->
+    <div id="activeSection" style="display:none">
+      <div class="section-label">🔴 Active Orders</div>
+      <div id="activeList"></div>
+    </div>
+
+    <!-- Past orders section -->
+    <div id="pastSection" style="display:none">
+      <div class="section-label" id="pastLabel">Past Orders</div>
+      <div id="pastList"></div>
+    </div>
+
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script src="js/shared.js"></script>
+  <script>
+    const API = window.CONFIG?.API_BASE || 'http://127.0.0.1:8000';
+
+    const ACTIVE_STATUSES   = ['pending','confirmed','preparing','out_for_delivery'];
+    const STATUS_LABELS     = { pending:'Pending', confirmed:'Confirmed', preparing:'Preparing', out_for_delivery:'Out for Delivery', delivered:'Delivered', cancelled:'Cancelled' };
+    const STATUS_ICONS      = { pending:'⏳', confirmed:'✅', preparing:'👨‍🍳', out_for_delivery:'🛵', delivered:'🎉', cancelled:'❌' };
+    const PROGRESS_STEPS    = ['pending','confirmed','preparing','out_for_delivery','delivered'];
+
+    let allOrders = [];
+    let expandedIds = new Set();
+
+    /* ── INIT ── */
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('sg_token');
+      if (!token) { document.getElementById('loginWall').style.display = 'block'; return; }
+      loadOrders();
+      /* Auto-refresh every 30s */
+      setInterval(loadOrders, 30000);
+    });
+
+    /* ── LOAD ORDERS ── */
+    async function loadOrders() {
+      const token = localStorage.getItem('sg_token');
+      if (!token) return;
+
+      const btn = document.getElementById('btnRefresh');
+      btn.classList.add('loading');
+
+      /* First load: show loading spinner */
+      if (!allOrders.length) {
+        document.getElementById('loadingState').style.display = 'block';
+        document.getElementById('activeSection').style.display = 'none';
+        document.getElementById('pastSection').style.display   = 'none';
+        document.getElementById('emptyState').style.display    = 'none';
+      }
+
+      try {
+        const res  = await fetch(`${API}/api/orders/my`, {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!res.ok) throw new Error();
+        allOrders = await res.json();
+        renderOrders();
+      } catch {
+        showToast('Could not load orders. Try refreshing.', 'error');
+      } finally {
+        document.getElementById('loadingState').style.display = 'none';
+        btn.classList.remove('loading');
+      }
+    }
+
+    /* ── RENDER ── */
+    function renderOrders() {
+      const active = allOrders.filter(o => ACTIVE_STATUSES.includes(o.status));
+      const past   = allOrders.filter(o => !ACTIVE_STATUSES.includes(o.status));
+
+      if (!allOrders.length) {
+        document.getElementById('emptyState').style.display  = 'block';
+        document.getElementById('activeSection').style.display = 'none';
+        document.getElementById('pastSection').style.display   = 'none';
+        return;
+      }
+
+      document.getElementById('emptyState').style.display = 'none';
+
+      /* Active */
+      if (active.length) {
+        document.getElementById('activeSection').style.display = 'block';
+        document.getElementById('activeList').innerHTML = active.map(o => orderCard(o, true)).join('');
+      } else {
+        document.getElementById('activeSection').style.display = 'none';
+      }
+
+      /* Past */
+      if (past.length) {
+        document.getElementById('pastSection').style.display = 'block';
+        document.getElementById('pastLabel').textContent = `Past Orders (${past.length})`;
+        document.getElementById('pastList').innerHTML = past.map(o => orderCard(o, false)).join('');
+      } else {
+        document.getElementById('pastSection').style.display = 'none';
+      }
+
+      /* Re-attach event listeners */
+      document.querySelectorAll('.order-card-header').forEach(header => {
+        header.addEventListener('click', () => toggleCard(header.dataset.id));
+      });
+      document.querySelectorAll('.btn-reorder').forEach(btn => {
+        btn.addEventListener('click', e => { e.stopPropagation(); reorder(btn.dataset.id); });
+      });
+      document.querySelectorAll('.btn-cancel').forEach(btn => {
+        btn.addEventListener('click', e => { e.stopPropagation(); cancelOrder(btn.dataset.id, btn); });
+      });
+
+      /* Restore expanded state */
+      expandedIds.forEach(id => {
+        const card = document.querySelector(`.order-card[data-id="${id}"]`);
+        if (card) card.classList.add('expanded');
+      });
+    }
+
+    /* ── ORDER CARD HTML ── */
+    function orderCard(o, isActive) {
+      const id        = o._id;
+      const shortId   = id.slice(-8).toUpperCase();
+      const date      = formatDate(o.created_at);
+      const items     = o.items || [];
+      const preview   = items.map(i => `${i.name} ×${i.qty}`).join(', ');
+      const status    = o.status;
+      const isExpanded = expandedIds.has(id);
+
+      return `
+      <div class="order-card${isActive ? ' active-order' : ''}" data-id="${id}">
+        <div class="order-card-header" data-id="${id}">
+          <div class="order-id-badge">
+            <span class="label">Order</span>
+            <span class="value">#${shortId}</span>
+          </div>
+          <div class="order-meta">
+            <div class="items-preview">
+              ${escHtml(preview)}
+              ${isActive ? '<span class="active-badge">Live</span>' : ''}
+            </div>
+            <div class="order-date">📅 ${date}</div>
+          </div>
+          <span class="chevron">▼</span>
+          <div class="order-right">
+            <span class="order-total">₹${o.total}</span>
+            <span class="status-badge status-${status}">${STATUS_ICONS[status] || ''} ${STATUS_LABELS[status] || status}</span>
+          </div>
+        </div>
+
+        ${isActive ? miniProgress(status) : ''}
+
+        <div class="order-details">
+          <!-- Items -->
+          <div class="details-section">
+            <div class="details-title">Items Ordered</div>
+            <div class="detail-items-list">
+              ${items.map(i => `
+                <div class="detail-item">
+                  <span class="name">${escHtml(i.name)} <span style="color:var(--text-mid)">×${i.qty}</span></span>
+                  <span class="price">₹${i.price * i.qty}</span>
+                </div>`).join('')}
+            </div>
+          </div>
+
+          <!-- Bill -->
+          <div class="details-section">
+            <div class="details-title">Bill Summary</div>
+            <div class="detail-totals">
+              <div class="detail-row"><span>Subtotal</span><span>₹${o.subtotal}</span></div>
+              ${o.discount_amount > 0 ? `<div class="detail-row discount"><span>🎟️ Discount ${o.coupon_code ? `(${escHtml(o.coupon_code)})` : ''}</span><span>−₹${o.discount_amount}</span></div>` : ''}
+              <div class="detail-row"><span>Delivery</span><span>${o.delivery_charge > 0 ? `₹${o.delivery_charge}` : '<span style="color:var(--success)">Free</span>'}</span></div>
+              <div class="detail-row total"><span>Total Paid</span><span>₹${o.total}</span></div>
+            </div>
+          </div>
+
+          <!-- Address -->
+          ${o.address && o.address.line1 ? `
+          <div class="details-section">
+            <div class="details-title">Delivery Address</div>
+            <div class="detail-address">
+              <strong>${escHtml(o.address.name || o.customer_name)}</strong>
+              ${escHtml(o.address.line1)}${o.address.landmark ? ', ' + escHtml(o.address.landmark) : ''}<br/>
+              ${escHtml(o.address.city)}${o.address.pincode ? ' – ' + escHtml(o.address.pincode) : ''}<br/>
+              📞 ${escHtml(o.address.phone || o.customer_phone)}
+            </div>
+          </div>` : ''}
+
+          <!-- Notes -->
+          ${o.notes ? `
+          <div class="details-section">
+            <div class="details-title">Special Instructions</div>
+            <div class="detail-notes">"${escHtml(o.notes)}"</div>
+          </div>` : ''}
+
+          <!-- Actions -->
+          <div class="order-actions">
+            ${isActive ? `<button class="btn-track" onclick="window.location.href='track.html?id=${id}'">🛵 Track Order</button>` : ''}
+            ${status === 'delivered' ? `<button class="btn-reorder" data-id="${id}">🔄 Reorder</button>` : ''}
+            ${status === 'pending'   ? `<button class="btn-cancel" data-id="${id}">✕ Cancel Order</button>` : ''}
+          </div>
+        </div>
+      </div>`;
+    }
+
+    /* ── MINI PROGRESS BAR ── */
+    function miniProgress(status) {
+      const steps   = ['pending','confirmed','preparing','out_for_delivery','delivered'];
+      const labels  = ['Placed','Confirmed','Preparing','On the way','Delivered'];
+      const current = steps.indexOf(status);
+      return `
+      <div class="mini-progress">
+        ${steps.map((s, i) => `
+          <div class="mp-step ${i < current ? 'done' : i === current ? 'active' : ''}">
+            <div class="mp-dot">${i < current ? '✓' : ''}</div>
+            <div class="mp-label">${labels[i]}</div>
+          </div>`).join('')}
+      </div>`;
+    }
+
+    /* ── TOGGLE CARD ── */
+    function toggleCard(id) {
+      const card = document.querySelector(`.order-card[data-id="${id}"]`);
+      if (!card) return;
+      const isOpen = card.classList.toggle('expanded');
+      if (isOpen) expandedIds.add(id);
+      else expandedIds.delete(id);
+    }
+
+    /* ── REORDER ── */
+    async function reorder(id) {
+      const order = allOrders.find(o => o._id === id);
+      if (!order) return;
+
+      const cartKey = localStorage.getItem('sg_user_email')
+        ? `sg_cart_${localStorage.getItem('sg_user_email')}`
+        : 'sg_cart';
+
+      let cart = [];
+      try { cart = JSON.parse(localStorage.getItem(cartKey)) || []; } catch {}
+
+      order.items.forEach(item => {
+        const ex = cart.find(c => c._id === item._id);
+        if (ex) ex.qty += item.qty;
+        else cart.push({ _id: item._id, name: item.name, price: item.price, qty: item.qty });
+      });
+
+      localStorage.setItem(cartKey, JSON.stringify(cart));
+      showToast('Items added to cart! 🛒', 'success');
+
+      /* Trigger cart badge update if shared.js is loaded */
+      if (typeof updateBadge === 'function') updateBadge();
+    }
+
+    /* ── CANCEL ORDER ── */
+    async function cancelOrder(id, btn) {
+      if (!confirm('Are you sure you want to cancel this order?')) return;
+      btn.disabled = true;
+      btn.textContent = 'Cancelling…';
+      try {
+        const res = await fetch(`${API}/api/orders/${id}/status`, {
+          method:  'PUT',
+          headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + localStorage.getItem('sg_token') },
+          body:    JSON.stringify({ status: 'cancelled' })
+        });
+        if (!res.ok) throw new Error();
+        showToast('Order cancelled.', 'success');
+        await loadOrders();
+      } catch {
+        showToast('Could not cancel order. Please contact us.', 'error');
+        btn.disabled = false;
+        btn.textContent = '✕ Cancel Order';
+      }
+    }
+
+    /* ── HELPERS ── */
+    function formatDate(iso) {
+      if (!iso) return '—';
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })
+           + ' · ' + d.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+    }
+
+    function escHtml(str) {
+      return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function showToast(msg, type = '') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast${type ? ' ' + type : ''} show`;
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    /* Init shared navbar */
+    if (typeof initShared === 'function') initShared();
+  </script>
+</body>
+</html>

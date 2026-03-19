@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout – शहर Garden Cafe &amp; Kitchen</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/logo.png"/>
+  <link rel="apple-touch-icon" href="images/logo.png"/>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ── VARIABLES ── */
+    :root {
+      --green:       #2d5a27;
+      --green-light: #4a7c42;
+      --green-dark:  #1a3516;
+      --gold:        #e8a020;
+      --gold-light:  #f5c842;
+      --cream:       #fdf8f0;
+      --white:       #ffffff;
+      --text-dark:   #1a1a1a;
+      --text-mid:    #555;
+      --error:       #e53e3e;
+      --success:     #38a169;
+      --shadow:      0 4px 24px rgba(0,0,0,0.10);
+      --shadow-lg:   0 12px 40px rgba(0,0,0,0.16);
+      --radius:      16px;
+      --transition:  0.2s ease;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Poppins',sans-serif; background:var(--cream); color:var(--text-dark); min-height:100vh; }
+    a { color:inherit; text-decoration:none; }
+    button { cursor:pointer; font-family:'Poppins',sans-serif; }
+
+    /* ── NAVBAR ── */
+    nav {
+      background:var(--white); display:flex; align-items:center;
+      justify-content:space-between; padding:0 48px; height:70px;
+      box-shadow:0 2px 12px rgba(0,0,0,0.07); position:sticky; top:0; z-index:100;
+    }
+    .nav-logo { display:flex; align-items:center; gap:10px; }
+    .nav-logo img { height:44px; width:44px; border-radius:50%; object-fit:cover; }
+    .nav-logo-text { display:flex; flex-direction:column; line-height:1.2; }
+    .nav-logo-name    { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--green); font-weight:700; }
+    .nav-logo-tagline { font-size:0.62rem; color:var(--text-mid); text-transform:uppercase; letter-spacing:0.5px; }
+    .nav-back {
+      display:flex; align-items:center; gap:6px;
+      color:var(--text-mid); font-size:0.88rem; font-weight:500;
+      transition:color var(--transition);
+    }
+    .nav-back:hover { color:var(--green); }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background:linear-gradient(135deg,var(--green-dark) 0%,var(--green) 60%,#3a7030 100%);
+      padding:36px 48px; position:relative; overflow:hidden;
+    }
+    .page-header::before { content:''; position:absolute; width:300px; height:300px; border-radius:50%; background:rgba(232,160,32,0.08); top:-100px; right:-60px; pointer-events:none; }
+    .page-header::after  { content:''; position:absolute; width:180px; height:180px; border-radius:50%; background:rgba(255,255,255,0.04); bottom:-60px; left:120px; pointer-events:none; }
+    .page-header-inner { position:relative; z-index:2; max-width:1100px; margin:0 auto; }
+    .page-header h1 { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--white); margin-bottom:4px; }
+    .page-header p  { color:rgba(255,255,255,0.65); font-size:0.88rem; }
+
+    /* ── STEP INDICATOR ── */
+    .step-indicator {
+      display:flex; align-items:center; gap:0; margin-top:20px;
+    }
+    .step-pill {
+      display:flex; align-items:center; gap:8px;
+      padding:6px 16px; border-radius:24px;
+      font-size:0.78rem; font-weight:600; transition:all var(--transition);
+      color:rgba(255,255,255,0.45);
+    }
+    .step-pill.active { background:rgba(255,255,255,0.15); color:var(--gold-light); }
+    .step-pill.done   { color:rgba(255,255,255,0.65); }
+    .step-num {
+      width:22px; height:22px; border-radius:50%; border:2px solid currentColor;
+      display:flex; align-items:center; justify-content:center; font-size:0.72rem;
+      flex-shrink:0;
+    }
+    .step-pill.done .step-num { background:var(--success); border-color:var(--success); color:var(--white); }
+    .step-pill.active .step-num { background:var(--gold); border-color:var(--gold); color:var(--text-dark); }
+    .step-sep { color:rgba(255,255,255,0.25); margin:0 4px; font-size:0.9rem; }
+
+    /* ── LOGIN WALL ── */
+    .login-wall { display:none; max-width:460px; margin:64px auto; padding:0 24px; text-align:center; }
+    .login-wall-card { background:var(--white); border-radius:20px; box-shadow:var(--shadow); padding:48px 36px; }
+    .login-wall-icon { font-size:3.5rem; margin-bottom:16px; }
+    .login-wall h2 { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--green); margin-bottom:10px; }
+    .login-wall p { color:var(--text-mid); font-size:0.9rem; line-height:1.7; margin-bottom:20px; }
+    .login-wall .note { background:linear-gradient(135deg,#fff8e6,#fff3cc); border:1px solid rgba(232,160,32,0.35); border-radius:10px; padding:12px 16px; font-size:0.82rem; color:var(--text-dark); margin-bottom:28px; }
+    .login-wall .note strong { color:var(--gold); }
+    .btn-goto-login { display:block; background:var(--green); color:var(--white); padding:14px 24px; border-radius:12px; font-size:0.95rem; font-weight:600; transition:background var(--transition); margin-bottom:12px; text-align:center; }
+    .btn-goto-login:hover { background:var(--green-light); }
+    .btn-goto-menu { display:block; border:2px solid var(--green); color:var(--green); padding:12px 24px; border-radius:12px; font-size:0.9rem; font-weight:600; transition:all var(--transition); text-align:center; }
+    .btn-goto-menu:hover { background:var(--green); color:var(--white); }
+
+    /* ── EMPTY CART ── */
+    .empty-cart-state { text-align:center; padding:80px 24px; display:none; }
+    .empty-cart-state .icon { font-size:4rem; margin-bottom:16px; }
+    .empty-cart-state h2 { font-family:'Playfair Display',serif; color:var(--green); margin-bottom:8px; }
+    .empty-cart-state p { color:var(--text-mid); margin-bottom:24px; }
+    .btn-go-menu { display:inline-block; background:var(--green); color:var(--white); padding:12px 32px; border-radius:32px; font-weight:600; transition:background var(--transition); }
+    .btn-go-menu:hover { background:var(--green-light); }
+
+    /* ── MAIN LAYOUT ── */
+    .checkout-wrap { max-width:1100px; margin:0 auto; padding:36px 24px 72px; display:none; }
+
+    /* ── STEP PANELS ── */
+    .step-panel { display:none; }
+    .step-panel.active { display:block; }
+
+    /* Two-col layout for step 1 */
+    .step1-grid { display:grid; grid-template-columns:1fr 360px; gap:28px; align-items:start; }
+    .step2-grid { display:grid; grid-template-columns:1fr 360px; gap:28px; align-items:start; }
+
+    /* ── CARDS ── */
+    .card {
+      background:var(--white); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:24px 28px; margin-bottom:20px;
+    }
+    .card:last-child { margin-bottom:0; }
+    .card-title {
+      font-family:'Playfair Display',serif; font-size:1.05rem;
+      color:var(--green); margin-bottom:18px;
+      display:flex; align-items:center; gap:8px;
+    }
+
+    /* ── ORDER ITEMS (Step 1 review) ── */
+    .review-item {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 0; border-bottom:1px solid #f0ede6; gap:12px;
+    }
+    .review-item:last-child { border-bottom:none; }
+    .ri-left { flex:1; }
+    .ri-name  { font-size:0.88rem; font-weight:600; color:var(--text-dark); }
+    .ri-qty   { font-size:0.75rem; color:var(--text-mid); margin-top:2px; }
+    .ri-price { font-size:0.9rem; font-weight:700; color:var(--gold); white-space:nowrap; }
+
+    /* ── DELIVER TO CARD ── */
+    .deliver-card { background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); padding:24px 28px; margin-bottom:20px; }
+    .deliver-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .deliver-title { font-family:'Playfair Display',serif; font-size:1.05rem; color:var(--green); display:flex; align-items:center; gap:8px; }
+    .btn-change {
+      background:none; border:1.5px solid var(--green); color:var(--green);
+      padding:5px 14px; border-radius:20px; font-size:0.78rem; font-weight:600;
+      transition:all var(--transition);
+    }
+    .btn-change:hover { background:var(--green); color:var(--white); }
+
+    /* Saved address display */
+    .address-display { background:var(--cream); border-radius:10px; padding:14px 16px; }
+    .addr-name  { font-size:0.88rem; font-weight:600; color:var(--text-dark); margin-bottom:3px; }
+    .addr-phone { font-size:0.80rem; color:var(--text-mid); margin-bottom:6px; }
+    .addr-line  { font-size:0.85rem; color:var(--text-dark); line-height:1.6; }
+
+    /* No location state */
+    .no-location { text-align:center; padding:16px; }
+    .no-location p { font-size:0.85rem; color:var(--text-mid); margin-bottom:14px; }
+    .btn-use-gps {
+      display:inline-flex; align-items:center; gap:8px;
+      background:var(--green); color:var(--white); border:none;
+      padding:10px 20px; border-radius:24px; font-size:0.85rem; font-weight:600;
+      transition:background var(--transition);
+    }
+    .btn-use-gps:hover { background:var(--green-light); }
+    .gps-spinner { width:14px; height:14px; border:2px solid rgba(255,255,255,0.4); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; display:none; }
+    .gps-spinner.show { display:block; }
+
+    /* Address form (shown when changing) */
+    .address-form { display:none; margin-top:16px; border-top:1px solid #f0ede6; padding-top:16px; }
+    .address-form.open { display:block; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .form-group { margin-bottom:14px; }
+    .form-group:last-child { margin-bottom:0; }
+    .form-group label { display:block; font-size:0.78rem; font-weight:600; color:var(--text-dark); margin-bottom:5px; }
+    .form-group label .req { color:var(--error); margin-left:2px; }
+    .input-wrap { position:relative; }
+    .input-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:0.88rem; pointer-events:none; }
+    .form-group input, .form-group textarea {
+      width:100%; padding:10px 12px 10px 36px;
+      border:2px solid #e8e0d4; border-radius:10px;
+      font-size:0.88rem; font-family:'Poppins',sans-serif;
+      color:var(--text-dark); background:var(--cream);
+      transition:border-color var(--transition),box-shadow var(--transition); outline:none;
+    }
+    .form-group textarea { padding:10px 12px; resize:vertical; min-height:72px; }
+    .form-group input:focus, .form-group textarea:focus {
+      border-color:var(--green); box-shadow:0 0 0 3px rgba(45,90,39,0.10); background:var(--white);
+    }
+    .form-group input.err { border-color:var(--error); }
+    .field-err { font-size:0.73rem; color:var(--error); margin-top:3px; display:none; }
+    .field-err.show { display:block; }
+    .btn-save-addr {
+      background:var(--green); color:var(--white); border:none;
+      padding:10px 24px; border-radius:10px; font-size:0.88rem; font-weight:600;
+      transition:background var(--transition); margin-top:6px;
+    }
+    .btn-save-addr:hover { background:var(--green-light); }
+
+    /* ── COUPON ── */
+    .coupon-wrap { display:flex; gap:10px; }
+    .coupon-wrap input {
+      flex:1; padding:10px 14px; border:2px solid #e8e0d4; border-radius:10px;
+      font-size:0.88rem; font-family:'Poppins',sans-serif; color:var(--text-dark);
+      background:var(--cream); outline:none; text-transform:uppercase; letter-spacing:1px;
+      transition:border-color var(--transition);
+    }
+    .coupon-wrap input:focus { border-color:var(--green); box-shadow:0 0 0 3px rgba(45,90,39,0.10); background:var(--white); }
+    .btn-apply-coupon {
+      background:var(--green); color:var(--white); border:none;
+      padding:10px 20px; border-radius:10px; font-size:0.85rem; font-weight:600;
+      transition:background var(--transition); white-space:nowrap;
+    }
+    .btn-apply-coupon:hover { background:var(--green-light); }
+    .btn-apply-coupon:disabled { opacity:0.6; cursor:not-allowed; }
+    .coupon-feedback { margin-top:10px; font-size:0.82rem; display:none; padding:10px 14px; border-radius:8px; align-items:center; gap:8px; }
+    .coupon-feedback.success { display:flex; background:#f0fff4; color:var(--success); border:1px solid #c6f6d5; }
+    .coupon-feedback.error   { display:flex; background:#fff5f5; color:var(--error);   border:1px solid #fed7d7; }
+    .btn-remove-coupon { margin-left:auto; background:none; border:none; color:var(--error); cursor:pointer; font-size:0.78rem; font-weight:600; }
+
+    /* ── ORDER NOTES ── */
+    .notes-group textarea {
+      padding:10px 12px; width:100%; border:2px solid #e8e0d4; border-radius:10px;
+      font-size:0.88rem; font-family:'Poppins',sans-serif; color:var(--text-dark);
+      background:var(--cream); resize:vertical; min-height:72px; outline:none;
+      transition:border-color var(--transition);
+    }
+    .notes-group textarea:focus { border-color:var(--green); box-shadow:0 0 0 3px rgba(45,90,39,0.10); background:var(--white); }
+
+    /* ── SUMMARY CARD (sticky right) ── */
+    .summary-card {
+      background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow);
+      padding:24px; position:sticky; top:90px;
+    }
+    .summary-title {
+      font-family:'Playfair Display',serif; font-size:1.05rem; color:var(--green);
+      margin-bottom:16px; padding-bottom:12px; border-bottom:2px solid var(--cream);
+    }
+    .summary-items { max-height:220px; overflow-y:auto; margin-bottom:14px; }
+    .summary-item { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f0ede6; gap:8px; }
+    .summary-item:last-child { border-bottom:none; }
+    .s-item-name  { font-size:0.82rem; font-weight:600; color:var(--text-dark); }
+    .s-item-qty   { font-size:0.72rem; color:var(--text-mid); }
+    .s-item-price { font-size:0.85rem; font-weight:700; color:var(--gold); white-space:nowrap; }
+    .price-breakdown { border-top:2px solid var(--cream); padding-top:14px; }
+    .price-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:9px; font-size:0.85rem; }
+    .price-row .lbl { color:var(--text-mid); }
+    .price-row .val { font-weight:600; color:var(--text-dark); }
+    .price-row.discount .val { color:var(--success); }
+    .price-row.total { border-top:2px solid var(--cream); padding-top:11px; margin-top:4px; margin-bottom:0; }
+    .price-row.total .lbl { font-size:0.95rem; font-weight:700; color:var(--text-dark); }
+    .price-row.total .val { font-size:1.15rem; font-weight:700; color:var(--green); font-family:'Playfair Display',serif; }
+    .free-note { color:var(--success); font-size:0.75rem; font-weight:600; }
+    .min-order-warn { background:#fff5f5; border:1px solid #fed7d7; border-radius:8px; padding:10px 14px; font-size:0.78rem; color:var(--error); margin-top:14px; display:none; }
+    .min-order-warn.show { display:block; }
+
+    /* ── DELIVERY TIME BADGE ── */
+    .delivery-badge {
+      background:linear-gradient(135deg,#fff8e6,#fff3cc); border:1px solid rgba(232,160,32,0.3);
+      border-radius:10px; padding:11px 14px; display:flex; align-items:center; gap:10px; margin-bottom:16px;
+    }
+    .delivery-badge .db-text { font-size:0.82rem; color:var(--text-dark); }
+    .delivery-badge .db-text strong { color:var(--gold); }
+
+    /* ── STEP BOTTOM ACTIONS ── */
+    .step-actions {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-top:24px; gap:14px;
+    }
+    .btn-back {
+      display:flex; align-items:center; gap:6px;
+      color:var(--text-mid); font-size:0.9rem; font-weight:600; border:none; background:none;
+      padding:12px 0; transition:color var(--transition);
+    }
+    .btn-back:hover { color:var(--green); }
+    .btn-continue {
+      background:var(--green); color:var(--white); border:none;
+      padding:13px 32px; border-radius:12px; font-size:0.95rem; font-weight:700;
+      transition:all var(--transition); display:flex; align-items:center; gap:8px;
+    }
+    .btn-continue:hover:not(:disabled) { background:var(--green-light); transform:translateY(-1px); box-shadow:0 6px 20px rgba(45,90,39,0.25); }
+    .btn-continue:disabled { opacity:0.5; cursor:not-allowed; transform:none; box-shadow:none; }
+
+    /* ── PAYMENT STEP ── */
+    /* Collapsed order summary on step 2 */
+    .order-recap {
+      background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow);
+      padding:20px 24px; margin-bottom:20px;
+    }
+    .recap-header {
+      display:flex; align-items:center; justify-content:space-between;
+      cursor:pointer; user-select:none;
+    }
+    .recap-title { font-family:'Playfair Display',serif; font-size:1rem; color:var(--green); }
+    .recap-total { font-size:1rem; font-weight:700; color:var(--green); font-family:'Playfair Display',serif; }
+    .recap-toggle { font-size:0.8rem; color:var(--text-mid); transition:transform var(--transition); }
+    .recap-toggle.open { transform:rotate(180deg); }
+    .recap-body { display:none; margin-top:14px; padding-top:14px; border-top:1px solid #f0ede6; }
+    .recap-body.open { display:block; }
+    .recap-addr { font-size:0.83rem; color:var(--text-mid); line-height:1.7; }
+    .recap-addr strong { color:var(--text-dark); }
+
+    /* Payment options */
+    .payment-options { display:flex; flex-direction:column; gap:14px; margin-bottom:24px; }
+    .payment-option {
+      border:2px solid #e8e0d4; border-radius:14px; padding:18px 20px;
+      cursor:pointer; transition:all var(--transition); display:flex; align-items:center; gap:16px;
+      background:var(--white);
+    }
+    .payment-option:hover { border-color:var(--green); box-shadow:0 4px 16px rgba(45,90,39,0.10); }
+    .payment-option.selected { border-color:var(--green); background:linear-gradient(135deg,#f0f7ee,#e8f5e4); box-shadow:0 4px 16px rgba(45,90,39,0.12); }
+    .payment-option input[type=radio] { display:none; }
+    .po-icon { font-size:1.8rem; flex-shrink:0; }
+    .po-info { flex:1; }
+    .po-label { font-size:0.95rem; font-weight:700; color:var(--text-dark); margin-bottom:2px; }
+    .po-desc  { font-size:0.78rem; color:var(--text-mid); }
+    .po-radio {
+      width:20px; height:20px; border-radius:50%; border:2px solid #d0c8be;
+      flex-shrink:0; display:flex; align-items:center; justify-content:center;
+      transition:all var(--transition);
+    }
+    .payment-option.selected .po-radio { border-color:var(--green); background:var(--green); }
+    .payment-option.selected .po-radio::after { content:''; width:8px; height:8px; border-radius:50%; background:var(--white); }
+
+    /* Online payment sub-options */
+    .online-sub { display:none; background:var(--cream); border-radius:10px; padding:14px 16px; margin-top:12px; }
+    .online-sub.show { display:block; }
+    .online-coming-soon { text-align:center; padding:8px 0; }
+    .online-coming-soon p { font-size:0.82rem; color:var(--text-mid); }
+    .online-coming-soon .badge { display:inline-block; background:rgba(232,160,32,0.15); color:var(--gold); border:1px solid rgba(232,160,32,0.3); border-radius:20px; padding:3px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.5px; margin-bottom:6px; }
+
+    /* Place order button */
+    .btn-place-order {
+      width:100%; background:var(--green); color:var(--white); border:none;
+      padding:15px; border-radius:12px; font-size:1rem; font-weight:700;
+      transition:all var(--transition); display:flex; align-items:center; justify-content:center; gap:10px;
+    }
+    .btn-place-order:hover:not(:disabled) { background:var(--green-light); transform:translateY(-1px); box-shadow:0 8px 24px rgba(45,90,39,0.25); }
+    .btn-place-order:disabled { opacity:0.5; cursor:not-allowed; transform:none; box-shadow:none; }
+    .btn-spinner { width:18px; height:18px; border:2px solid rgba(255,255,255,0.4); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; display:none; }
+    .btn-spinner.show { display:block; }
+    .secure-note { text-align:center; margin-top:10px; font-size:0.73rem; color:var(--text-mid); }
+
+    /* ── SUCCESS OVERLAY ── */
+    .success-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,0.55);
+      display:flex; align-items:center; justify-content:center;
+      z-index:9999; padding:24px; opacity:0; pointer-events:none;
+      transition:opacity 0.3s;
+    }
+    .success-overlay.show { opacity:1; pointer-events:all; }
+    .success-modal {
+      background:var(--white); border-radius:24px; padding:48px 40px;
+      text-align:center; max-width:420px; width:100%;
+      box-shadow:0 24px 64px rgba(0,0,0,0.25);
+      transform:scale(0.9); transition:transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    .success-overlay.show .success-modal { transform:scale(1); }
+    .checkmark-circle {
+      width:80px; height:80px; border-radius:50%; background:var(--success);
+      display:flex; align-items:center; justify-content:center;
+      margin:0 auto 20px; animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both;
+      box-shadow:0 0 0 0 rgba(56,161,105,0.4);
+    }
+    .checkmark-circle.pulse { animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both, pulse 2s 0.5s ease-out infinite; }
+    @keyframes popIn { from { transform:scale(0); opacity:0; } to { transform:scale(1); opacity:1; } }
+    @keyframes pulse { 0%,100% { box-shadow:0 0 0 0 rgba(56,161,105,0.4); } 70% { box-shadow:0 0 0 16px rgba(56,161,105,0); } }
+    .checkmark-circle svg { width:38px; height:38px; stroke:white; stroke-width:3; fill:none; stroke-dasharray:60; stroke-dashoffset:60; animation:drawCheck 0.4s 0.3s ease forwards; }
+    @keyframes drawCheck { to { stroke-dashoffset:0; } }
+    .success-modal h2 { font-family:'Playfair Display',serif; font-size:1.7rem; color:var(--text-dark); margin-bottom:8px; }
+    .success-modal p { color:var(--text-mid); font-size:0.88rem; line-height:1.7; margin-bottom:6px; }
+    .success-order-id { display:inline-block; background:var(--cream); border:1px solid #e8e0d4; border-radius:20px; padding:5px 16px; font-size:0.78rem; font-weight:700; color:var(--green); letter-spacing:1px; margin:10px 0 20px; }
+    .success-redirect { font-size:0.78rem; color:var(--text-mid); margin-top:12px; }
+    .btn-go-orders {
+      display:block; background:var(--green); color:var(--white);
+      padding:13px 24px; border-radius:12px; font-size:0.92rem; font-weight:600;
+      transition:background var(--transition); text-align:center;
+    }
+    .btn-go-orders:hover { background:var(--green-light); }
+
+    /* ── TOAST ── */
+    .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--text-dark); color:var(--white); padding:12px 24px; border-radius:32px; font-size:0.85rem; font-weight:500; z-index:9998; transition:transform 0.3s; white-space:nowrap; pointer-events:none; }
+    .toast.show { transform:translateX(-50%) translateY(0); }
+    .toast.error   { background:var(--error); }
+    .toast.success { background:var(--success); }
+
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px) {
+      .step1-grid, .step2-grid { grid-template-columns:1fr; }
+      .summary-card { position:static; order:-1; }
+      nav { padding:0 20px; }
+      .page-header { padding:28px 24px; }
+      .page-header h1 { font-size:1.5rem; }
+    }
+    @media(max-width:600px) {
+      .form-row { grid-template-columns:1fr; }
+      .checkout-wrap { padding:24px 16px 60px; }
+      .step-actions { flex-wrap:wrap; }
+      .btn-continue { width:100%; justify-content:center; order:1; }
+      .btn-back { order:2; margin:0 auto; }
+      .success-modal { padding:36px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav>
+    <a class="nav-logo" href="index.html">
+      <img src="images/logo.png" alt="शहर Garden"/>
+      <div class="nav-logo-text">
+        <span class="nav-logo-name">शहर Garden</span>
+        <span class="nav-logo-tagline">Cafe &amp; Kitchen</span>
+      </div>
+    </a>
+    <a class="nav-back" href="menu.html" id="navBack">
+      ← Back to Menu
+    </a>
+  </nav>
+
+  <!-- ── PAGE HEADER ── -->
+  <div class="page-header">
+    <div class="page-header-inner">
+      <h1>Checkout 🛒</h1>
+      <p>Almost there! Review your order and complete payment.</p>
+      <div class="step-indicator">
+        <div class="step-pill active" id="pill1">
+          <div class="step-num">1</div>
+          Review Order
+        </div>
+        <span class="step-sep">›</span>
+        <div class="step-pill" id="pill2">
+          <div class="step-num">2</div>
+          Payment
+        </div>
+        <span class="step-sep">›</span>
+        <div class="step-pill" id="pill3">
+          <div class="step-num">✓</div>
+          Confirmed
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LOGIN WALL ── -->
+  <div class="login-wall" id="loginWall">
+    <div class="login-wall-card">
+      <div class="login-wall-icon">🔐</div>
+      <h2>Sign In to Checkout</h2>
+      <p>You need to be signed in to place an order. Your cart is saved — sign in and come right back.</p>
+      <div class="note"><strong>Your cart is saved!</strong> Sign in and your items will still be waiting.</div>
+      <a class="btn-goto-login" href="login.html">Sign In to Continue →</a>
+      <a class="btn-goto-menu" href="menu.html">← Keep Browsing</a>
+    </div>
+  </div>
+
+  <!-- ── EMPTY CART ── -->
+  <div class="empty-cart-state" id="emptyState">
+    <div class="icon">🛒</div>
+    <h2>Your cart is empty</h2>
+    <p>Add some delicious dishes before checking out.</p>
+    <a class="btn-go-menu" href="menu.html">Browse Menu</a>
+  </div>
+
+  <!-- ── MAIN CHECKOUT ── -->
+  <div class="checkout-wrap" id="checkoutWrap">
+
+    <!-- ════════════════════════════════════════
+         STEP 1 — REVIEW ORDER
+    ════════════════════════════════════════ -->
+    <div class="step-panel active" id="step1">
+      <div class="step1-grid">
+
+        <!-- LEFT -->
+        <div>
+
+          <!-- Order Items -->
+          <div class="card">
+            <div class="card-title">🧾 Your Order</div>
+            <div id="reviewItems"></div>
+          </div>
+
+          <!-- Deliver To -->
+          <div class="deliver-card" id="deliverCard">
+            <div class="deliver-header">
+              <div class="deliver-title">📍 Deliver To</div>
+              <button class="btn-change" id="btnChangeAddr" onclick="toggleAddressForm()">Change</button>
+            </div>
+
+            <!-- Address display (shown when address exists) -->
+            <div id="addressDisplay" style="display:none;">
+              <div class="address-display">
+                <div class="addr-name" id="dispName"></div>
+                <div class="addr-phone" id="dispPhone"></div>
+                <div class="addr-line" id="dispAddr"></div>
+              </div>
+            </div>
+
+            <!-- No address / use GPS -->
+            <div id="noAddress">
+              <div class="no-location">
+                <p>No delivery address saved. Choose an option:</p>
+                <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
+                  <button class="btn-use-gps" id="btnUseGPS" onclick="fetchGPS()">
+                    <div class="gps-spinner" id="gpsSpinner"></div>
+                    <span id="gpsLabel">📍 Use My Current Location</span>
+                  </button>
+                  <button class="btn-use-gps" onclick="openAddressForm()" style="background:var(--green-light);">
+                    🏠 Add a Different Address
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Address Form -->
+            <div class="address-form" id="addressForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Full Name <span class="req">*</span></label>
+                  <div class="input-wrap">
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="f_name" placeholder="Your full name"/>
+                  </div>
+                  <div class="field-err" id="err_name">Please enter your name.</div>
+                </div>
+                <div class="form-group">
+                  <label>Phone Number <span class="req">*</span></label>
+                  <div class="input-wrap">
+                    <span class="input-icon">📞</span>
+                    <input type="tel" id="f_phone" placeholder="10-digit number" maxlength="10"/>
+                  </div>
+                  <div class="field-err" id="err_phone">Enter a valid 10-digit number.</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Address Line 1 <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <span class="input-icon">🏠</span>
+                  <input type="text" id="f_line1" placeholder="House/Flat no., Street, Colony"/>
+                </div>
+                <div class="field-err" id="err_line1">Please enter your address.</div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>City <span class="req">*</span></label>
+                  <div class="input-wrap">
+                    <span class="input-icon">🏙️</span>
+                    <input type="text" id="f_city" placeholder="City"/>
+                  </div>
+                  <div class="field-err" id="err_city">Please enter your city.</div>
+                </div>
+                <div class="form-group">
+                  <label>Pincode <span class="req">*</span></label>
+                  <div class="input-wrap">
+                    <span class="input-icon">📮</span>
+                    <input type="text" id="f_pincode" placeholder="6-digit pincode" maxlength="6"/>
+                  </div>
+                  <div class="field-err" id="err_pincode">Enter a valid 6-digit pincode.</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Landmark / Nearby Area</label>
+                <div class="input-wrap">
+                  <span class="input-icon">📍</span>
+                  <input type="text" id="f_landmark" placeholder="e.g. Near City Mall, Opp. SBI Bank"/>
+                </div>
+              </div>
+              <button class="btn-save-addr" onclick="saveAddress()">Save Address →</button>
+            </div>
+          </div>
+
+          <!-- Order Notes -->
+          <div class="card">
+            <div class="card-title">📝 Order Notes</div>
+            <div class="notes-group">
+              <textarea id="f_notes" placeholder="Any special instructions? e.g. Less spicy, extra sauce, no onions, ring the bell…"></textarea>
+            </div>
+          </div>
+
+          <!-- Coupon -->
+          <div class="card">
+            <div class="card-title">🎟️ Have a Coupon?</div>
+            <div class="coupon-wrap">
+              <input type="text" id="couponInput" placeholder="Enter coupon e.g. SHEHER10"/>
+              <button class="btn-apply-coupon" id="btnApplyCoupon" onclick="applyCoupon()">Apply</button>
+            </div>
+            <div class="coupon-feedback" id="couponFeedback"></div>
+          </div>
+
+          <!-- Step 1 Actions -->
+          <div class="step-actions">
+            <button class="btn-back" onclick="window.location.href='menu.html'">← Back to Cart</button>
+            <button class="btn-continue" id="btnContinue" onclick="goToPayment()">
+              Continue to Payment →
+            </button>
+          </div>
+
+        </div>
+
+        <!-- RIGHT — Summary -->
+        <div>
+          <div class="summary-card">
+            <div class="summary-title">🧾 Order Summary</div>
+            <div class="summary-items" id="summaryItems"></div>
+            <div class="price-breakdown">
+              <div class="price-row">
+                <span class="lbl">Subtotal</span>
+                <span class="val" id="priceSubtotal">₹0</span>
+              </div>
+              <div class="price-row discount" id="discountRow" style="display:none">
+                <span class="lbl">Coupon Discount</span>
+                <span class="val" id="priceDiscount">−₹0</span>
+              </div>
+              <div class="price-row">
+                <span class="lbl">Delivery Charge</span>
+                <span class="val" id="priceDelivery">₹30</span>
+              </div>
+              <div class="price-row total">
+                <span class="lbl">Total</span>
+                <span class="val" id="priceTotal">₹0</span>
+              </div>
+            </div>
+            <div class="min-order-warn" id="minOrderWarn">
+              Minimum order value is <strong>₹250</strong>. Please add more items.
+            </div>
+            <div class="delivery-badge" style="margin-top:16px;">
+              <span>⏱️</span>
+              <div class="db-text">Est. delivery: <strong id="deliveryTimeText">30–45 min</strong></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- end step 1 -->
+
+    <!-- ════════════════════════════════════════
+         STEP 2 — PAYMENT
+    ════════════════════════════════════════ -->
+    <div class="step-panel" id="step2">
+      <div class="step2-grid">
+
+        <!-- LEFT -->
+        <div>
+
+          <!-- Collapsed Order Recap -->
+          <div class="order-recap">
+            <div class="recap-header" onclick="toggleRecap()">
+              <div class="recap-title">🧾 Order Summary</div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div class="recap-total" id="recapTotal">₹0</div>
+                <div class="recap-toggle" id="recapToggle">▼</div>
+              </div>
+            </div>
+            <div class="recap-body" id="recapBody">
+              <div id="recapItems" style="margin-bottom:10px;"></div>
+              <div class="recap-addr" id="recapAddr"></div>
+            </div>
+          </div>
+
+          <!-- Payment Options -->
+          <div class="card">
+            <div class="card-title">💳 Payment Method</div>
+            <div class="payment-options">
+
+              <div class="payment-option" id="opt_cod" onclick="selectPayment('cod')">
+                <input type="radio" name="payment" value="cod"/>
+                <div class="po-icon">💵</div>
+                <div class="po-info">
+                  <div class="po-label">Cash on Delivery</div>
+                  <div class="po-desc">Pay in cash when your order arrives</div>
+                </div>
+                <div class="po-radio"></div>
+              </div>
+
+              <div class="payment-option" id="opt_online" onclick="selectPayment('online')">
+                <input type="radio" name="payment" value="online"/>
+                <div class="po-icon">📱</div>
+                <div class="po-info">
+                  <div class="po-label">Pay Online</div>
+                  <div class="po-desc">UPI, Card, Net Banking</div>
+                </div>
+                <div class="po-radio"></div>
+                <div class="online-sub" id="onlineSub">
+                  <div class="online-coming-soon">
+                    <p>💳 UPI · Cards · Net Banking via Razorpay</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Place Order -->
+            <button class="btn-place-order" id="btnPlaceOrder" onclick="placeOrder()" disabled>
+              <span id="placeOrderText">🔒 Place Order</span>
+              <div class="btn-spinner" id="placeSpinner"></div>
+            </button>
+            <div class="secure-note">🔒 Safe &amp; secure checkout</div>
+
+          </div>
+
+          <!-- Step 2 Actions -->
+          <div class="step-actions" style="margin-top:8px;">
+            <button class="btn-back" onclick="goToReview()">← Back</button>
+          </div>
+
+        </div>
+
+        <!-- RIGHT — Summary (same sticky card) -->
+        <div>
+          <div class="summary-card">
+            <div class="summary-title">🧾 Order Summary</div>
+            <div class="summary-items" id="summaryItems2"></div>
+            <div class="price-breakdown">
+              <div class="price-row">
+                <span class="lbl">Subtotal</span>
+                <span class="val" id="priceSubtotal2">₹0</span>
+              </div>
+              <div class="price-row discount" id="discountRow2" style="display:none">
+                <span class="lbl">Coupon Discount</span>
+                <span class="val" id="priceDiscount2">−₹0</span>
+              </div>
+              <div class="price-row">
+                <span class="lbl">Delivery Charge</span>
+                <span class="val" id="priceDelivery2">₹30</span>
+              </div>
+              <div class="price-row total">
+                <span class="lbl">Total</span>
+                <span class="val" id="priceTotal2">₹0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- end step 2 -->
+
+  </div><!-- end checkout-wrap -->
+
+  <!-- ── SUCCESS OVERLAY ── -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-modal">
+      <div class="checkmark-circle pulse">
+        <svg viewBox="0 0 52 52"><polyline points="14,27 22,35 38,19"/></svg>
+      </div>
+      <h2>Order Placed! 🎉</h2>
+      <p>Thank you! Your order has been received and is being prepared.</p>
+      <div class="success-order-id" id="successOrderId">Order #...</div>
+      <a class="btn-go-orders" href="orders.html">View My Orders →</a>
+      <p class="success-redirect">Redirecting in <span id="countDown">4</span>s…</p>
+    </div>
+  </div>
+
+  <!-- ── TOAST ── -->
+  <div class="toast" id="toast"></div>
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script>
+    const API = 'http://127.0.0.1:8000';
+
+    let cart        = [];
+    let couponCode  = null;
+    let discountAmt = 0;
+    let deliveryAddress = null;   /* { name, phone, line1, city, pincode, landmark } */
+    let selectedPayment = null;
+    let settings = {
+      delivery_charge: 30,
+      free_delivery_above: 500,
+      min_order_value: 250,
+      estimated_delivery_time: '30–45 min'
+    };
+
+    /* ════════════════════════════════════════
+       INIT
+    ════════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', async () => {
+      const token = localStorage.getItem('sg_token');
+
+      if (!token) {
+        document.getElementById('loginWall').style.display = 'block';
+        return;
+      }
+
+      const cartKey = localStorage.getItem('sg_user_email') ? `sg_cart_${localStorage.getItem('sg_user_email')}` : 'sg_cart';
+      try { cart = JSON.parse(localStorage.getItem(cartKey)) || []; } catch { cart = []; }
+
+      if (!cart.length) {
+        document.getElementById('emptyState').style.display = 'block';
+        return;
+      }
+
+      document.getElementById('checkoutWrap').style.display = 'block';
+
+      const savedName  = localStorage.getItem('sg_user_name')  || '';
+      const savedPhone = localStorage.getItem('sg_user_phone') || '';
+      if (savedName)  document.getElementById('f_name').value  = savedName;
+      if (savedPhone) document.getElementById('f_phone').value = savedPhone;
+
+      await fetchSettings();
+      renderReviewItems();
+      renderSummary();
+
+      /* Try to load saved address from DB first */
+      await loadSavedAddress();
+    });
+
+    /* ════════════════════════════════════════
+       LOAD SAVED ADDRESS FROM DB
+    ════════════════════════════════════════ */
+    async function loadSavedAddress() {
+      const token = localStorage.getItem('sg_token');
+
+      /* 1. Try DB saved address first */
+      try {
+        const res  = await fetch(`${API}/api/me/address`, {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const data = await res.json();
+        if (data.address) {
+          deliveryAddress = data.address;
+          renderAddressState();
+          return;
+        }
+      } catch {}
+
+      /* 2. Fall back to navbar saved location (sg_user_location) */
+      try {
+        const raw = localStorage.getItem('sg_user_location');
+        if (raw) {
+          const loc = JSON.parse(raw);
+          if (loc && (loc.short || loc.full)) {
+            deliveryAddress = {
+              _isGPS:  true,
+              name:    localStorage.getItem('sg_user_name')  || '',
+              phone:   localStorage.getItem('sg_user_phone') || '',
+              short:   loc.short || '',
+              full:    loc.full  || loc.short || '',
+              lat:     loc.lat,
+              lon:     loc.lon,
+              line1:   '',
+              city:    '',
+              pincode: '',
+              landmark:'',
+            };
+          }
+        }
+      } catch {}
+
+      renderAddressState();
+    }
+
+    /* ════════════════════════════════════════
+       SETTINGS
+    ════════════════════════════════════════ */
+    async function fetchSettings() {
+      try {
+        const res = await fetch(`${API}/api/settings`);
+        if (res.ok) {
+          settings = await res.json();
+          document.getElementById('deliveryTimeText').textContent =
+            settings.estimated_delivery_time || '30–45 min';
+        }
+      } catch {}
+    }
+
+    /* ════════════════════════════════════════
+       RENDER REVIEW ITEMS
+    ════════════════════════════════════════ */
+    function renderReviewItems() {
+      const container = document.getElementById('reviewItems');
+      container.innerHTML = cart.map(item => `
+        <div class="review-item">
+          <div class="ri-left">
+            <div class="ri-name">${escapeHtml(item.name)}</div>
+            <div class="ri-qty">× ${item.qty}</div>
+          </div>
+          <div class="ri-price">₹${(item.price * item.qty).toFixed(0)}</div>
+        </div>
+      `).join('');
+    }
+
+    /* ════════════════════════════════════════
+       RENDER SUMMARY (both steps)
+    ════════════════════════════════════════ */
+    function renderSummary() {
+      const subtotal       = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      const deliveryCharge = subtotal >= settings.free_delivery_above ? 0 : settings.delivery_charge;
+      const total          = Math.max(0, subtotal - discountAmt + deliveryCharge);
+
+      /* Step 1 summary */
+      const s1Items = document.getElementById('summaryItems');
+      s1Items.innerHTML = cart.map(i => `
+        <div class="summary-item">
+          <div><div class="s-item-name">${escapeHtml(i.name)}</div><div class="s-item-qty">× ${i.qty}</div></div>
+          <div class="s-item-price">₹${(i.price * i.qty).toFixed(0)}</div>
+        </div>`).join('');
+
+      setSummaryValues('', subtotal, discountAmt, deliveryCharge, total);
+
+      /* Step 2 summary */
+      const s2Items = document.getElementById('summaryItems2');
+      s2Items.innerHTML = s1Items.innerHTML;
+      setSummaryValues('2', subtotal, discountAmt, deliveryCharge, total);
+
+      /* Recap total */
+      document.getElementById('recapTotal').textContent = `₹${total.toFixed(0)}`;
+
+      /* Min order */
+      const belowMin = subtotal < settings.min_order_value;
+      document.getElementById('minOrderWarn').classList.toggle('show', belowMin);
+      document.getElementById('btnContinue').disabled = belowMin;
+    }
+
+    function setSummaryValues(sfx, subtotal, discount, delivery, total) {
+      document.getElementById('priceSubtotal' + sfx).textContent = `₹${subtotal.toFixed(0)}`;
+      if (discount > 0) {
+        document.getElementById('discountRow' + sfx).style.display = 'flex';
+        document.getElementById('priceDiscount' + sfx).textContent = `−₹${discount.toFixed(0)}`;
+      } else {
+        document.getElementById('discountRow' + sfx).style.display = 'none';
+      }
+      document.getElementById('priceDelivery' + sfx).innerHTML = delivery === 0
+        ? '<span class="free-note">FREE 🎉</span>'
+        : `₹${delivery}`;
+      document.getElementById('priceTotal' + sfx).textContent = `₹${total.toFixed(0)}`;
+    }
+
+    /* ════════════════════════════════════════
+       ADDRESS STATE
+    ════════════════════════════════════════ */
+    function renderAddressState() {
+      const display   = document.getElementById('addressDisplay');
+      const noAddr    = document.getElementById('noAddress');
+      const changeBtn = document.getElementById('btnChangeAddr');
+
+      if (deliveryAddress && deliveryAddress.line1 && deliveryAddress.city && deliveryAddress.pincode) {
+        /* Full verified address (from DB or saved form) — show it, hide no-address block */
+        display.style.display = 'block';
+        noAddr.style.display  = 'none';
+        changeBtn.style.display = 'inline-block';
+
+        document.getElementById('dispName').textContent  = deliveryAddress.name  || '—';
+        document.getElementById('dispPhone').textContent = deliveryAddress.phone ? `📞 ${deliveryAddress.phone}` : '';
+        const parts = [deliveryAddress.line1, deliveryAddress.city, deliveryAddress.pincode, deliveryAddress.landmark].filter(Boolean);
+        document.getElementById('dispAddr').textContent  = parts.join(', ');
+
+        /* Pre-fill form fields */
+        ['name','phone','line1','city','pincode','landmark'].forEach(k => {
+          const el = document.getElementById('f_' + k);
+          if (el && deliveryAddress[k]) el.value = deliveryAddress[k];
+        });
+
+      } else if (deliveryAddress && deliveryAddress._isGPS) {
+        /* GPS location selected — show a "using current location" badge, no form needed */
+        display.style.display = 'block';
+        noAddr.style.display  = 'none';
+        changeBtn.style.display = 'inline-block';
+
+        document.getElementById('dispName').textContent  = deliveryAddress.name || localStorage.getItem('sg_user_name') || '';
+        document.getElementById('dispPhone').textContent = '';
+        document.getElementById('dispAddr').textContent  = '📍 ' + (deliveryAddress.full || deliveryAddress.short || 'Current Location');
+
+      } else {
+        /* No address at all — show options */
+        display.style.display   = 'none';
+        noAddr.style.display    = 'block';
+        changeBtn.style.display = 'none';
+      }
+    }
+
+    function toggleAddressForm() {
+      const form = document.getElementById('addressForm');
+      const isOpen = form.classList.contains('open');
+      if (isOpen) {
+        form.classList.remove('open');
+      } else {
+        /* Pre-fill from current address if available */
+        if (deliveryAddress) {
+          ['name','phone','line1','city','pincode','landmark'].forEach(k => {
+            const el = document.getElementById('f_' + k);
+            if (el && deliveryAddress[k]) el.value = deliveryAddress[k];
+          });
+        }
+        form.classList.add('open');
+      }
+    }
+
+    async function saveAddress() {
+      const name     = document.getElementById('f_name').value.trim();
+      const phone    = document.getElementById('f_phone').value.trim();
+      const line1    = document.getElementById('f_line1').value.trim();
+      const city     = document.getElementById('f_city').value.trim();
+      const pincode  = document.getElementById('f_pincode').value.trim();
+      const landmark = document.getElementById('f_landmark').value.trim();
+
+      let valid = true;
+      const showErr = (id, show) => document.getElementById(id)?.classList.toggle('show', show);
+      const markErr = (id, err)  => document.getElementById(id)?.classList.toggle('err', err);
+
+      if (!name)                    { showErr('err_name',true);    markErr('f_name',true);    valid=false; } else { showErr('err_name',false);    markErr('f_name',false); }
+      if (!/^\d{10}$/.test(phone))  { showErr('err_phone',true);   markErr('f_phone',true);   valid=false; } else { showErr('err_phone',false);   markErr('f_phone',false); }
+      if (!line1)                   { showErr('err_line1',true);   markErr('f_line1',true);   valid=false; } else { showErr('err_line1',false);   markErr('f_line1',false); }
+      if (!city)                    { showErr('err_city',true);    markErr('f_city',true);    valid=false; } else { showErr('err_city',false);    markErr('f_city',false); }
+      if (!/^\d{6}$/.test(pincode)) { showErr('err_pincode',true); markErr('f_pincode',true); valid=false; } else { showErr('err_pincode',false); markErr('f_pincode',false); }
+
+      if (!valid) { showToast('Please fill in all required address fields.', 'error'); return; }
+
+      const addr = { name, phone, line1, city, pincode, landmark };
+
+      /* Save to DB */
+      try {
+        const res = await fetch(`${API}/api/me/address`, {
+          method:  'PUT',
+          headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + localStorage.getItem('sg_token') },
+          body:    JSON.stringify(addr)
+        });
+        if (!res.ok) { showToast('Could not save address. Try again.', 'error'); return; }
+      } catch {
+        showToast('Connection error. Address not saved to account.', 'error');
+        /* Still proceed locally */
+      }
+
+      deliveryAddress = addr;
+      document.getElementById('addressForm').classList.remove('open');
+      renderAddressState();
+      showToast('Address saved!', 'success');
+    }
+
+    /* ════════════════════════════════════════
+       GPS FETCH
+    ════════════════════════════════════════ */
+    function fetchGPS() {
+      /* If navbar already has a lat/lon saved, reuse it — no need to ask permission again */
+      try {
+        const raw = localStorage.getItem('sg_user_location');
+        if (raw) {
+          const loc = JSON.parse(raw);
+          if (loc && loc.lat && loc.lon) {
+            deliveryAddress = {
+              _isGPS:   true,
+              name:     localStorage.getItem('sg_user_name') || '',
+              phone:    '',
+              short:    loc.short || '',
+              full:     loc.full  || loc.short || 'Current Location',
+              lat:      loc.lat,
+              lon:      loc.lon,
+              line1:    '',
+              city:     '',
+              pincode:  '',
+              landmark: '',
+            };
+            renderAddressState();
+            showToast('Using your saved location!', 'success');
+            return;
+          }
+        }
+      } catch {}
+
+      /* Otherwise ask for fresh GPS permission */
+      if (!navigator.geolocation) { showToast('Geolocation not supported by your browser.', 'error'); return; }
+
+      const spinner = document.getElementById('gpsSpinner');
+      const label   = document.getElementById('gpsLabel');
+      const btn     = document.getElementById('btnUseGPS');
+      btn.disabled  = true;
+      spinner.classList.add('show');
+      label.textContent = 'Detecting…';
+
+      navigator.geolocation.getCurrentPosition(
+        async pos => {
+          try {
+            const { latitude:lat, longitude:lon } = pos.coords;
+
+            /* Save to navbar key so it's reusable */
+            let short = 'Current Location', full = 'Current Location';
+            try {
+              const res = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=16&addressdetails=1`,
+                { headers: { 'User-Agent': 'SheherGardenApp/1.0', 'Accept-Language': 'en' } }
+              );
+              if (res.ok) {
+                const data = await res.json();
+                const addr = data.address || {};
+                const area = addr.neighbourhood || addr.suburb || addr.village || '';
+                const city = addr.city || addr.town || addr.county || '';
+                short = [area, city].filter(Boolean).join(', ') || data.display_name?.split(',')[0] || 'Current Location';
+                full  = data.display_name || short;
+              }
+            } catch {}
+
+            /* Save to localStorage so navbar & future visits have it */
+            localStorage.setItem('sg_user_location', JSON.stringify({ short, full, lat, lon }));
+
+            deliveryAddress = {
+              _isGPS: true,
+              name:   localStorage.getItem('sg_user_name') || '',
+              phone:  '',
+              short, full, lat, lon,
+              line1: '', city: '', pincode: '', landmark: '',
+            };
+
+            renderAddressState();
+            showToast('Location detected! You can proceed or add a detailed address.', 'success');
+          } catch {
+            showToast('Could not detect location. Please enter address manually.', 'error');
+            openAddressForm();
+          } finally { resetGPS(); }
+        },
+        err => {
+          const msgs = { 1:'Location permission denied. Please enter address manually.', 2:'Location unavailable.', 3:'Request timed out.' };
+          showToast(msgs[err.code] || 'Could not get location.', 'error');
+          openAddressForm();
+          resetGPS();
+        },
+        { timeout:12000, maximumAge:300000 }
+      );
+    }
+
+    function resetGPS() {
+      const btn = document.getElementById('btnUseGPS');
+      if (btn) btn.disabled = false;
+      document.getElementById('gpsSpinner').classList.remove('show');
+      document.getElementById('gpsLabel').textContent = '📍 Use My Current Location';
+    }
+
+    function openAddressForm() {
+      document.getElementById('noAddress').style.display  = 'none';
+      document.getElementById('addressDisplay').style.display = 'none';
+      document.getElementById('addressForm').classList.add('open');
+      document.getElementById('btnChangeAddr').style.display = 'none';
+    }
+
+    /* ════════════════════════════════════════
+       COUPON
+    ════════════════════════════════════════ */
+    async function applyCoupon() {
+      const code = document.getElementById('couponInput').value.trim().toUpperCase();
+      if (!code) { showToast('Please enter a coupon code.', 'error'); return; }
+
+      const btn = document.getElementById('btnApplyCoupon');
+      btn.disabled = true; btn.textContent = 'Checking…';
+
+      const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      const token    = localStorage.getItem('sg_token');
+      try {
+        const res  = await fetch(`${API}/api/coupons/validate`, {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + token },
+          body: JSON.stringify({ code, subtotal })
+        });
+        const data = await res.json();
+        const fb   = document.getElementById('couponFeedback');
+
+        if (data.valid) {
+          couponCode  = code;
+          discountAmt = data.discount_amount;
+          fb.className = 'coupon-feedback success';
+          fb.innerHTML = `✅ ${data.message} (−₹${discountAmt.toFixed(0)}) <button class="btn-remove-coupon" onclick="removeCoupon()">Remove</button>`;
+          document.getElementById('couponInput').disabled = true;
+          btn.style.display = 'none';
+          renderSummary();
+        } else {
+          couponCode = null; discountAmt = 0;
+          fb.className = 'coupon-feedback error';
+          fb.innerHTML = `❌ ${data.message}`;
+          renderSummary();
+        }
+      } catch {
+        showToast('Could not validate coupon. Check your connection.', 'error');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Apply';
+      }
+    }
+
+    function removeCoupon() {
+      couponCode = null; discountAmt = 0;
+      document.getElementById('couponInput').value    = '';
+      document.getElementById('couponInput').disabled = false;
+      document.getElementById('btnApplyCoupon').style.display = '';
+      const fb = document.getElementById('couponFeedback');
+      fb.className = 'coupon-feedback'; fb.innerHTML = '';
+      renderSummary();
+    }
+
+    /* ════════════════════════════════════════
+       STEP NAVIGATION
+    ════════════════════════════════════════ */
+    function goToPayment() {
+      /* Validate address — GPS addresses are allowed through, detailed addresses need full fields */
+      if (!deliveryAddress) {
+        showToast('Please select a delivery address first.', 'error');
+        document.getElementById('deliverCard').scrollIntoView({ behavior:'smooth', block:'center' });
+        return;
+      }
+
+      /* If it's a GPS address, we need at least a name for the order */
+      if (deliveryAddress._isGPS && !deliveryAddress.name) {
+        deliveryAddress.name = localStorage.getItem('sg_user_name') || 'Customer';
+      }
+
+      /* If it's a detailed address, make sure it's complete */
+      if (!deliveryAddress._isGPS && (!deliveryAddress.line1 || !deliveryAddress.city || !deliveryAddress.pincode)) {
+        showToast('Please save a complete delivery address first.', 'error');
+        document.getElementById('addressForm').classList.add('open');
+        document.getElementById('deliverCard').scrollIntoView({ behavior:'smooth', block:'center' });
+        return;
+      }
+
+      /* Build recap */
+      const subtotal       = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      const deliveryCharge = subtotal >= settings.free_delivery_above ? 0 : settings.delivery_charge;
+      const total          = Math.max(0, subtotal - discountAmt + deliveryCharge);
+
+      document.getElementById('recapItems').innerHTML = cart.map(i =>
+        `<div style="display:flex;justify-content:space-between;font-size:0.82rem;padding:4px 0;border-bottom:1px solid #f0ede6;">
+          <span style="color:var(--text-dark);font-weight:600;">${escapeHtml(i.name)} × ${i.qty}</span>
+          <span style="color:var(--gold);font-weight:700;">₹${(i.price*i.qty).toFixed(0)}</span>
+        </div>`
+      ).join('');
+
+      const addr = deliveryAddress;
+      document.getElementById('recapAddr').innerHTML = `
+        <strong>${escapeHtml(addr.name)}</strong> · ${escapeHtml(addr.phone)}<br/>
+        ${escapeHtml([addr.line1, addr.city, addr.pincode, addr.landmark].filter(Boolean).join(', '))}
+        ${document.getElementById('f_notes').value.trim() ? `<br/><em style="font-size:0.78rem;">Note: ${escapeHtml(document.getElementById('f_notes').value.trim())}</em>` : ''}
+      `;
+
+      /* Switch steps */
+      document.getElementById('step1').classList.remove('active');
+      document.getElementById('step2').classList.add('active');
+
+      /* Update pills */
+      document.getElementById('pill1').classList.remove('active');
+      document.getElementById('pill1').classList.add('done');
+      document.getElementById('pill1').querySelector('.step-num').textContent = '✓';
+      document.getElementById('pill2').classList.add('active');
+
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+
+    function goToReview() {
+      document.getElementById('step2').classList.remove('active');
+      document.getElementById('step1').classList.add('active');
+
+      document.getElementById('pill2').classList.remove('active');
+      document.getElementById('pill1').classList.remove('done');
+      document.getElementById('pill1').classList.add('active');
+      document.getElementById('pill1').querySelector('.step-num').textContent = '1';
+
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+
+    /* ════════════════════════════════════════
+       PAYMENT SELECTION
+    ════════════════════════════════════════ */
+    function selectPayment(method) {
+      selectedPayment = method;
+      document.getElementById('opt_cod').classList.toggle('selected', method === 'cod');
+      document.getElementById('opt_online').classList.toggle('selected', method === 'online');
+      document.getElementById('onlineSub').classList.toggle('show', method === 'online');
+
+      document.getElementById('btnPlaceOrder').disabled = false;
+      if (method === 'online') {
+        document.getElementById('placeOrderText').textContent = '🔒 Pay Online';
+      } else {
+        document.getElementById('placeOrderText').textContent = '🔒 Place Order';
+      }
+    }
+
+    /* Toggle recap body */
+    function toggleRecap() {
+      document.getElementById('recapBody').classList.toggle('open');
+      document.getElementById('recapToggle').classList.toggle('open');
+    }
+
+    /* ════════════════════════════════════════
+       PLACE ORDER
+    ════════════════════════════════════════ */
+    async function placeOrder() {
+      if (!selectedPayment) {
+        showToast('Please select a payment method.', 'error'); return;
+      }
+
+      const subtotal       = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      const deliveryCharge = subtotal >= settings.free_delivery_above ? 0 : settings.delivery_charge;
+      const total          = Math.max(0, subtotal - discountAmt + deliveryCharge);
+
+      const orderData = {
+        order_type:      'delivery',
+        customer_name:   deliveryAddress.name,
+        customer_phone:  deliveryAddress.phone,
+        address: {
+          line1:    deliveryAddress.line1,
+          city:     deliveryAddress.city,
+          pincode:  deliveryAddress.pincode,
+          landmark: deliveryAddress.landmark || '',
+        },
+        items:           cart.map(i => ({ name:i.name, price:i.price, quantity:i.qty, category:i.category||'' })),
+        subtotal,
+        coupon_code:     couponCode,
+        discount_amount: discountAmt,
+        delivery_charge: deliveryCharge,
+        total,
+        notes:           document.getElementById('f_notes').value.trim(),
+      };
+
+      if (selectedPayment === 'online') {
+        await placeOrderOnline(orderData, total);
+      } else {
+        await placeOrderCOD(orderData, total);
+      }
+    }
+
+    /* ── COD flow (unchanged) ── */
+    async function placeOrderCOD(orderData, total) {
+      const btn = document.getElementById('btnPlaceOrder');
+      btn.disabled = true;
+      document.getElementById('placeOrderText').textContent = 'Placing Order…';
+      document.getElementById('placeSpinner').classList.add('show');
+
+      try {
+        const res  = await fetch(`${API}/api/orders`, {
+          method:  'POST',
+          headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + localStorage.getItem('sg_token') },
+          body:    JSON.stringify({ ...orderData, payment_method: 'cod' })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('sg_last_order_id',   data.order_id);
+          localStorage.setItem('sg_last_order_total', total);
+          const cartKey = localStorage.getItem('sg_user_email') ? `sg_cart_${localStorage.getItem('sg_user_email')}` : 'sg_cart';
+          localStorage.removeItem(cartKey);
+          showSuccessModal(data.order_id);
+        } else {
+          showToast(data.detail || 'Could not place order. Please try again.', 'error');
+        }
+      } catch {
+        showToast('Connection error. Make sure backend is running.', 'error');
+      } finally {
+        btn.disabled = false;
+        document.getElementById('placeOrderText').textContent = '🔒 Place Order';
+        document.getElementById('placeSpinner').classList.remove('show');
+      }
+    }
+
+    /* ── Razorpay online flow ── */
+    async function placeOrderOnline(orderData, total) {
+      const btn = document.getElementById('btnPlaceOrder');
+      btn.disabled = true;
+      document.getElementById('placeOrderText').textContent = 'Opening Payment…';
+      document.getElementById('placeSpinner').classList.add('show');
+
+      try {
+        /* Step 1 — create Razorpay order on backend */
+        const res  = await fetch(`${API}/api/payments/create-order`, {
+          method:  'POST',
+          headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + localStorage.getItem('sg_token') },
+          body:    JSON.stringify({ amount: total })
+        });
+        const data = await res.json();
+        if (!res.ok) { showToast(data.detail || 'Could not initiate payment.', 'error'); return; }
+
+        /* Step 2 — open Razorpay checkout popup */
+        const options = {
+          key:         data.key_id,
+          amount:      data.amount,
+          currency:    data.currency,
+          name:        'शहर Garden Cafe & Kitchen',
+          description: 'Food Order',
+          order_id:    data.razorpay_order_id,
+          prefill: {
+            name:    orderData.customer_name,
+            contact: orderData.customer_phone,
+            email:   localStorage.getItem('sg_user_email') || '',
+          },
+          theme: { color: '#2d5a27' },
+
+          handler: async function(response) {
+            /* Step 3 — verify signature + place order on backend */
+            try {
+              const verifyRes = await fetch(`${API}/api/payments/verify`, {
+                method:  'POST',
+                headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + localStorage.getItem('sg_token') },
+                body:    JSON.stringify({
+                  razorpay_order_id:   response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature:  response.razorpay_signature,
+                  order_data:          orderData,
+                })
+              });
+              const verifyData = await verifyRes.json();
+              if (verifyRes.ok) {
+                localStorage.setItem('sg_last_order_id',   verifyData.order_id);
+                localStorage.setItem('sg_last_order_total', total);
+                const cartKey = localStorage.getItem('sg_user_email') ? `sg_cart_${localStorage.getItem('sg_user_email')}` : 'sg_cart';
+                localStorage.removeItem(cartKey);
+                showSuccessModal(verifyData.order_id);
+              } else {
+                showToast(verifyData.detail || 'Payment verification failed.', 'error');
+              }
+            } catch {
+              showToast('Verification error. Contact support with your payment ID.', 'error');
+            }
+          },
+
+          modal: {
+            ondismiss: function() {
+              btn.disabled = false;
+              document.getElementById('placeOrderText').textContent = '🔒 Pay Online';
+              document.getElementById('placeSpinner').classList.remove('show');
+            }
+          }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.on('payment.failed', function(response) {
+          showToast('Payment failed: ' + (response.error.description || 'Unknown error'), 'error');
+          btn.disabled = false;
+          document.getElementById('placeOrderText').textContent = '🔒 Pay Online';
+          document.getElementById('placeSpinner').classList.remove('show');
+        });
+        rzp.open();
+
+      } catch {
+        showToast('Connection error. Make sure backend is running.', 'error');
+        btn.disabled = false;
+        document.getElementById('placeOrderText').textContent = '🔒 Pay Online';
+        document.getElementById('placeSpinner').classList.remove('show');
+      }
+    }
+
+    /* ════════════════════════════════════════
+       SUCCESS MODAL
+    ════════════════════════════════════════ */
+    function showSuccessModal(orderId) {
+      /* Update step pills */
+      document.getElementById('pill2').classList.remove('active');
+      document.getElementById('pill2').classList.add('done');
+      document.getElementById('pill2').querySelector('.step-num').textContent = '✓';
+      document.getElementById('pill3').classList.add('active');
+
+      const shortId = orderId ? orderId.slice(-8).toUpperCase() : 'XXXXXXXX';
+      document.getElementById('successOrderId').textContent = `Order #${shortId}`;
+      document.getElementById('successOverlay').classList.add('show');
+
+      /* Countdown redirect */
+      let secs = 4;
+      const cd = document.getElementById('countDown');
+      const interval = setInterval(() => {
+        secs--;
+        cd.textContent = secs;
+        if (secs <= 0) {
+          clearInterval(interval);
+          window.location.href = `orders.html?order_id=${orderId}`;
+        }
+      }, 1000);
+    }
+
+    /* ════════════════════════════════════════
+       HELPERS
+    ════════════════════════════════════════ */
+    function escapeHtml(str) {
+      return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function showToast(msg, type='') {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.className = `toast ${type} show`;
+      setTimeout(() => { t.className = `toast ${type}`; }, 3500);
+    }
+  </script>
+</body>
+</html>
