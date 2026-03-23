@@ -1,31 +1,21 @@
 {
   "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "backend/app.py",
-      "use": "@vercel/python"
+      "source": "/api/:path*",
+      "destination": "/backend/app.py"
     },
     {
-      "src": "frontend/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "backend/app.py"
+      "source": "/images/dish_:path*",
+      "destination": "/backend/images/dish_:path*"
     },
     {
-      "src": "/images/(dish_.*)",
-      "dest": "backend/images/$1"
+      "source": "/images/:path*",
+      "destination": "/frontend/images/:path*"
     },
     {
-      "src": "/images/(.*)",
-      "dest": "frontend/images/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "frontend/$1"
+      "source": "/(.*)",
+      "destination": "/frontend/$1"
     }
   ]
 }
