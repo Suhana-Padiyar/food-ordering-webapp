@@ -376,7 +376,9 @@
 
   <script src="js/shared.js"></script>
   <script>
-    const API = window.CONFIG?.API_BASE || 'http://127.0.0.1:8000';
+    const API = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+  ? 'http://127.0.0.1:8000'
+  : 'https://food-ordering-webapp-pgcy.onrender.com';
 
     const STEPS = [
       { key:'pending',          icon:'📋', label:'Order Placed',      desc:'We received your order and are reviewing it.' },

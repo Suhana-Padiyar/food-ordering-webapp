@@ -353,7 +353,9 @@
 
   <script src="js/shared.js"></script>
   <script>
-    const API = window.CONFIG?.API_BASE || 'http://127.0.0.1:8000';
+    const API = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+  ? 'http://127.0.0.1:8000'
+  : 'https://food-ordering-webapp-pgcy.onrender.com';
 
     const ACTIVE_STATUSES   = ['pending','confirmed','preparing','out_for_delivery'];
     const STATUS_LABELS     = { pending:'Pending', confirmed:'Confirmed', preparing:'Preparing', out_for_delivery:'Out for Delivery', delivered:'Delivered', cancelled:'Cancelled' };
