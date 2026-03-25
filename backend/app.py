@@ -31,19 +31,42 @@ IMAGES_DIR = Path(__file__).parent / "images"
 IMAGES_DIR.mkdir(exist_ok=True)
 app.mount("/images", StaticFiles(directory=str(IMAGES_DIR)), name="images")
 
+ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+    "https://sheher-garden-cafe.netlify.app",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://127.0.0.1:5500",
-        "http://localhost:5500",
-        "http://127.0.0.1:3000",
-        "http://localhost:3000",
-        "https://sheher-garden-cafe.netlify.app",
-    ],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ── Explicit OPTIONS handler ──
+# Catches CORS preflight requests and always returns correct headers,
+# even if FastAPI's middleware hasn't fully initialised yet.
+from fastapi import Request
+from fastapi.responses import Response as FastAPIResponse
+
+@app.options("/{rest_of_path:path}")
+async def preflight_handler(rest_of_path: str, request: Request):
+    origin = request.headers.get("origin", "https://sheher-garden-cafe.netlify.app")
+    allowed = origin if origin in ALLOWED_ORIGINS else "https://sheher-garden-cafe.netlify.app"
+    return FastAPIResponse(
+        status_code=200,
+        headers={
+            "Access-Control-Allow-Origin":      allowed,
+            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Methods":     "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+            "Access-Control-Allow-Headers":     "Authorization, Content-Type",
+            "Access-Control-Max-Age":           "86400",
+        }
+    )
 
 # ══════════════════════════════════════════════════
 # CLOUDINARY
