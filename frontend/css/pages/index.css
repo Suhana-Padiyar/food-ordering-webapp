@@ -252,7 +252,7 @@
   .hero-content h1  { font-size:2.1rem; }
   .hero-subtitle    { font-size:0.97rem; }
   .hero-content p   { font-size:0.90rem; margin-bottom:18px; }
-  .hero-search      { max-width:100%; margin-bottom:18px; }
+  .hero-search      { width:90%; max-width:420px; margin-bottom:18px; }
   .btn-hero-primary, .btn-hero-outline { padding:11px 22px; font-size:0.88rem; }
   .cat-circle       { width:96px; height:96px; }
   .why-cards        { grid-template-columns:1fr; }

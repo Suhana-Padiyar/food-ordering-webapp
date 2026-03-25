@@ -164,7 +164,7 @@
   .hero-deco    { display:none; }
   .hero-content h1 { font-size:1.8rem; }
   .hero-content p  { font-size:0.88rem; }
-  .hero-search     { max-width:100%; }
+  .hero-search     { width:90%; max-width:420px;}
   .hero-stats      { gap:20px; }
   .hero-stat .num  { font-size:1.2rem; }
   .cat-circle      { width:90px; height:90px; }
